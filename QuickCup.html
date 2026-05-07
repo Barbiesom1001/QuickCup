@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUICK CUP - Ultimate Coffee & Bakery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Bai+Jamjuree:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+        
+        :root {
+            --forest-green: #9C6644; /* เปลี่ยนแกนสีหลักเป็นสีน้ำตาลมินิมอล (Coffee Brown) */
+            --off-white: #FAF7F2; /* ปรับพื้นหลังให้อมครีม/น้ำตาลอ่อนละมุนขึ้น */
+            --wood-brown: #5D4037;
+            --cream: #F4EFEA;
+            --bg-body: var(--off-white);
+            --bg-app: white;
+            --card-bg: white;
+            --text-main: #4A3B32; /* สีข้อความน้ำตาลเข้ม */
+            --text-muted: #8C7A6B; /* สีข้อความเทาอมน้ำตาล */
+            --border-color: #EAE4DC;
+        }
+
+        body.dark-mode {
+            --bg-body: #1F1B18;
+            --bg-app: #282420;
+            --card-bg: #322D28;
+            --text-main: #EAE4DC;
+            --text-muted: #A3968C;
+            --border-color: #433D36;
+            --cream: #322D28;
+        }
+
+        body {
+            font-family: 'Bai Jamjuree', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            scroll-behavior: smooth;
+            transition: all 0.3s ease;
+        }
+
+        h1, h2, h3, h4, h5, .font-heading {
+            font-family: 'Mitr', sans-serif;
+            color: var(--text-main);
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-app);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+        }
+
+        .hidden { display: none !important; }
+        .bg-forest { background-color: var(--forest-green) !important; }
+        .bg-forest\/5 { background-color: rgba(156, 102, 68, 0.05) !important; }
+        
+        /* เพิ่มคลาสบังคับสีให้เป็นโทนน้ำตาลทั้งหมด */
+        .text-forest { color: var(--forest-green) !important; }
+        .border-forest { border-color: var(--forest-green) !important; }
+        .ring-forest { --tw-ring-color: var(--forest-green) !important; }
+        .accent-forest { accent-color: var(--forest-green) !important; }
+        
+        /* Overrides สีเขียวและสีส้มเดิมที่ฝังในคลาส Tailwind ให้เป็นโทนน้ำตาลทั้งหมด */
+        .text-green-400, .text-orange-500, .text-orange-600 { color: var(--forest-green) !important; }
+        .bg-green-50, .bg-orange-50, .bg-orange-100 { background-color: var(--cream) !important; }
+        .bg-orange-500 { background-color: var(--wood-brown) !important; }
+        .border-green-100, .border-green-50, .border-orange-100 { border-color: var(--border-color) !important; }
+        .shadow-green-900\/20 { box-shadow: 0 4px 14px 0 rgba(156, 102, 68, 0.3) !important; }
+        .shadow-orange-500\/30 { box-shadow: 0 4px 14px 0 rgba(93, 64, 55, 0.3) !important; }
+        label:has(input:checked) { background-color: var(--cream) !important; border-color: var(--forest-green) !important; }
+
+        /* Overrides สีในหน้า Payment Page */
+        #page-payment svg [stroke="#E86A11"] { stroke: var(--forest-green) !important; }
+        #page-payment svg [fill="#E86A11"] { fill: var(--forest-green) !important; }
+        .text-\[\#E86A11\] { color: var(--forest-green) !important; }
+        .text-\[\#452A1B\] { color: var(--wood-brown) !important; }
+        .bg-\[\#452A1B\] { background-color: var(--wood-brown) !important; }
+        .border-\[\#452A1B\]\/10 { border-color: rgba(93, 64, 55, 0.1) !important; }
+        .border-\[\#452A1B\]\/20 { border-color: rgba(93, 64, 55, 0.2) !important; }
+
+        /* Custom UI */
+        .sweetness-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            outline: none;
+        }
+        .sweetness-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--forest-green);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 4px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .cat-btn.active {
+            background-color: var(--forest-green) !important;
+            color: white !important;
+            border-radius: 99px;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(150px);
+            background: #1e293b;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 99px;
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 2.5rem;
+        }
+
+        .profile-item-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stamp-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem 0.75rem;
+            justify-items: center;
+            align-items: center;
+            padding: 0 0.5rem;
+        }
+        
+        .choice-btn {
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            transition: all 0.2s ease;
+            background: var(--bg-body);
+            color: var(--text-main);
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .choice-btn.selected {
+            background: var(--forest-green) !important;
+            color: #FFFFFF !important;
+            border-color: var(--forest-green);
+        }
+        .choice-btn .label-text { font-family: 'Mitr', sans-serif; font-weight: 700; }
+        .choice-btn .desc-text { font-size: 0.7rem; color: var(--text-muted); }
+        .choice-btn.selected .desc-text { color: rgba(255, 255, 255, 0.85); }
+
+        .fab-btn {
+            position: fixed;
+            bottom: 2.5rem;
+            right: 1.5rem;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(46, 139, 87, 0.3);
+        }
+
+        #search-overlay {
+            transition: all 0.3s ease;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        #search-overlay.open {
+            max-height: 100px;
+            opacity: 1;
+            padding-top: 1rem;
+            padding-bottom: 0.5rem;
+        }
+
+        body.dark-mode .bg-white { background-color: var(--card-bg) !important; }
+        body.dark-mode .bg-gray-50, body.dark-mode .bg-cream { background-color: #1e1e1e !important; }
+        body.dark-mode .border-gray-100 { border-color: #333 !important; }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e2e8f0;
+        }
+        .status-dot.active {
+            background: var(--forest-green);
+            box-shadow: 0 0 10px var(--forest-green);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Toast -->
+        <div id="toast" class="flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-green-400"></i>
+            <span id="toast-message">แจ้งเตือน</span>
+        </div>
+
+        <!-- Header -->
+        <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md px-6 py-4 flex flex-col border-b border-gray-50">
+            <div class="flex justify-between items-center w-full">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('page-menu')">
+                    <div class="w-6 h-6 text-forest">
+                        <svg viewBox="0 0 100 100" fill="currentColor" class="w-full h-full drop-shadow-sm" style="--cutout-color: #ffffff;">
+                            <path d="M42 38 C 36 28 48 20 42 10" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                            <path d="M56 36 C 50 24 64 16 56 4" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+                            <path d="M22 45 C 22 75 74 75 74 45 Z" fill="currentColor"/>
+                            <ellipse cx="48" cy="45" rx="26" ry="6" fill="var(--cutout-color)"/>
+                            <ellipse cx="48" cy="46" rx="22" ry="4" fill="currentColor"/>
+                            <path d="M35 55 C 45 75 65 65 65 55" fill="none" stroke="var(--cutout-color)" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M70 52 C 90 52 90 70 68 72" fill="none" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/>
+                            <path d="M12 84 C 12 96 84 96 84 84 Z" fill="currentColor"/>
+                            <path d="M22 86 C 40 92 56 92 74 86" fill="none" stroke="var(--cutout-color)" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-black italic uppercase">QUICK CUP</h1>
+                </div>
+                <div class="flex gap-1.5 items-center">
+                    <button class="p-2 hover:bg-gray-50 rounded-full text-gray-500" onclick="toggleSearchBar()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button class="relative p-2 hover:bg-gray-50 rounded-full text-gray-500" onclick="showPage('page-notifications')">
+                        <i class="fa-solid fa-bell"></i>
+                        <span id="notif-badge" class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse hidden"></span>
+                    </button>
+                    <button class="relative p-2 hover:bg-gray-50 rounded-full text-gray-500" onclick="showPage('page-cart')">
+                        <i class="fa-solid fa-basket-shopping text-lg"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-0.5 text-forest text-[11px] font-black">0</span>
+                    </button>
+                    <button class="p-1.5 hover:bg-gray-50 rounded-full transition-all" onclick="showPage('page-profile')">
+                        <img id="nav-profile-img" src="https://i.pinimg.com/236x/e8/bb/bc/e8bbbcafc1e99c1d20bf22ba607a2ce3.jpg" class="w-7 h-7 rounded-full object-cover shadow-sm border border-gray-100">
+                    </button>
+                </div>
+            </div>
+            <div id="search-overlay" class="w-full px-1">
+                <div class="relative"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"></i><input type="text" id="search-input" oninput="handleSearch()" placeholder="ค้นหาเมนู..." class="w-full pl-11 pr-4 py-3 bg-gray-50 rounded-2xl border-none focus:ring-1 focus:ring-forest/30 text-sm"></div>
+            </div>
+        </header>
+
+        <!-- Active Tracker -->
+        <div id="order-tracker-bar" class="hidden bg-forest text-white px-6 py-4 flex justify-between items-center cursor-pointer sticky top-[73px] z-40 shadow-lg" onclick="showPage('page-status')">
+            <div class="flex items-center gap-3"><i class="fa-solid fa-clock-rotate-left animate-pulse"></i><p id="tracker-text" class="text-xs font-bold font-heading">ออเดอร์ Q-01 กำลังปรุง...</p></div>
+            <i class="fa-solid fa-chevron-right text-xs opacity-50"></i>
+        </div>
+
+        <!-- FAB: Rewards -->
+        <button id="reward-fab" class="fab-btn bg-forest text-white w-[60px] h-[60px] rounded-full flex items-center justify-center active:scale-95 transition-all shadow-xl" onclick="showPage('page-rewards')">
+            <div class="relative w-8 h-8 flex items-center justify-center">
+                <svg viewBox="0 0 100 100" fill="currentColor" class="w-full h-full drop-shadow-sm" style="--cutout-color: #9C6644;">
+                    <path d="M42 38 C 36 28 48 20 42 10" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M56 36 C 50 24 64 16 56 4" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+                    <path d="M22 45 C 22 75 74 75 74 45 Z" fill="currentColor"/>
+                    <ellipse cx="48" cy="45" rx="26" ry="6" fill="var(--cutout-color)"/>
+                    <ellipse cx="48" cy="46" rx="22" ry="4" fill="currentColor"/>
+                    <path d="M35 55 C 45 75 65 65 65 55" fill="none" stroke="var(--cutout-color)" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M70 52 C 90 52 90 70 68 72" fill="none" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/>
+                    <path d="M12 84 C 12 96 84 96 84 84 Z" fill="currentColor"/>
+                    <path d="M22 86 C 40 92 56 92 74 86" fill="none" stroke="var(--cutout-color)" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <i class="fa-solid fa-star text-[10px] absolute -top-1 -right-2 text-yellow-300 drop-shadow-md"></i>
+            </div>
+        </button>
+
+        <!-- Page: Menu Grid -->
+        <main id="page-menu" class="flex-grow pb-32">
+            <nav class="px-6 flex gap-3 overflow-x-auto no-scrollbar py-4 sticky top-[73px] bg-white z-30 border-b border-gray-50">
+                <button class="cat-btn active px-4 py-2 text-[11px] font-bold whitespace-nowrap uppercase tracking-widest transition-all" onclick="filterMenu('all', this)">ทั้งหมด</button>
+                <button class="cat-btn px-4 py-2 text-[11px] font-bold whitespace-nowrap uppercase tracking-widest transition-all text-orange-500" onclick="filterMenu('signature', this)"><i class="fa-solid fa-star text-[10px] mr-1"></i>Signature</button>
+                <button class="cat-btn px-4 py-2 text-[11px] font-bold whitespace-nowrap uppercase tracking-widest transition-all" onclick="filterMenu('coffee', this)">Coffee</button>
+                <button class="cat-btn px-4 py-2 text-[11px] font-bold whitespace-nowrap uppercase tracking-widest transition-all" onclick="filterMenu('non-coffee', this)">Non-Coffee</button>
+                <button class="cat-btn px-4 py-2 text-[11px] font-bold whitespace-nowrap uppercase tracking-widest transition-all" onclick="filterMenu('refreshers', this)">Refreshers</button>
+                <button class="cat-btn px-4 py-2 text-[11px] font-bold whitespace-nowrap uppercase tracking-widest transition-all" onclick="filterMenu('bakery', this)">Bakery</button>
+            </nav>
+            <div id="product-grid" class="px-6 grid grid-cols-2 gap-6 mt-8"></div>
+            <div id="pagination-container" class="flex justify-center items-center gap-3 py-12"></div>
+        </main>
+
+        <!-- Page: Notifications (Full Page) -->
+        <main id="page-notifications" class="flex-grow hidden bg-white overflow-y-auto no-scrollbar">
+            <div class="sticky top-0 z-30 bg-white/90 backdrop-blur-md px-6 py-4 flex items-center gap-4 border-b">
+                <button onclick="showPage('page-menu')" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center text-gray-400"><i class="fa-solid fa-chevron-left"></i></button>
+                <h2 class="text-xl font-bold font-heading">ศูนย์แจ้งเตือน</h2>
+            </div>
+            <div class="p-6 space-y-4">
+                <div id="notif-ready" class="p-5 bg-green-50 rounded-3xl border border-green-100 flex gap-4 cursor-pointer hidden" onclick="viewReadyOrder()">
+                    <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-forest shadow-sm"><i class="fa-solid fa-mug-hot"></i></div>
+                    <div class="flex-grow"><div class="flex justify-between items-start"><h4 class="text-sm font-bold text-gray-800 font-heading">ออเดอร์พร้อมรับ!</h4><span class="text-[9px] text-gray-400">Just Now</span></div><p class="text-xs text-gray-500 mt-1">ออเดอร์หมายเลข Q-01 พร้อมรับที่เคาน์เตอร์แล้วครับ</p></div>
+                </div>
+                <div id="notif-promo" class="p-5 bg-orange-50 rounded-3xl border border-orange-100 flex gap-4 cursor-pointer" onclick="toggleModal('modal-promotion')">
+                    <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-orange-500 shadow-sm"><i class="fa-solid fa-tag"></i></div>
+                    <div class="flex-grow"><div class="flex justify-between items-start"><h4 class="text-sm font-bold text-gray-800 font-heading">โปรโมชั่นประจำเดือน</h4><span class="text-[9px] text-gray-400">2h ago</span></div><p class="text-xs text-gray-500 mt-1">ส่วนลดเบเกอรี่ 50% เมื่อสั่งกาแฟ Signature!</p></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Page: Rewards Dashboard -->
+        <main id="page-rewards" class="flex-grow hidden bg-white overflow-y-auto no-scrollbar pb-48">
+            <div class="sticky top-0 z-30 bg-white/90 backdrop-blur-md px-6 py-4 flex items-center justify-between border-b">
+                <div class="flex items-center gap-4">
+                    <button onclick="showPage('page-menu')" class="w-9 h-9 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-800 transition-all"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div><h2 class="text-sm font-bold font-heading text-gray-800 leading-none">บัตรสะสมคะแนน</h2><p id="reward-user-header" class="text-[10px] text-forest font-bold mt-1 uppercase tracking-widest">คุณซาโตรุ โกโจ</p></div>
+                </div>
+            </div>
+            
+            <!-- 1. Hero Section: Brown Theme Card (Matching Image) -->
+            <section class="relative w-full bg-gray-50 flex justify-center px-6 pt-24 pb-20 z-10">
+                <div class="w-full max-w-md bg-[#5d473d] text-white rounded-[2rem] relative shadow-2xl pt-14 pb-8 px-8">
+                    
+                    <!-- Floating Top Icon -->
+                    <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 bg-[#988478] border-[6px] border-gray-50 rounded-full flex items-center justify-center shadow-lg">
+                        <div class="w-9 h-9 text-white">
+                            <svg viewBox="0 0 100 100" fill="currentColor" class="w-full h-full drop-shadow-sm" style="--cutout-color: #988478;">
+                                <path d="M42 38 C 36 28 48 20 42 10" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                                <path d="M56 36 C 50 24 64 16 56 4" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+                                <path d="M22 45 C 22 75 74 75 74 45 Z" fill="currentColor"/>
+                                <ellipse cx="48" cy="45" rx="26" ry="6" fill="var(--cutout-color)"/>
+                                <ellipse cx="48" cy="46" rx="22" ry="4" fill="currentColor"/>
+                                <path d="M35 55 C 45 75 65 65 65 55" fill="none" stroke="var(--cutout-color)" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M70 52 C 90 52 90 70 68 72" fill="none" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/>
+                                <path d="M12 84 C 12 96 84 96 84 84 Z" fill="currentColor"/>
+                                <path d="M22 86 C 40 92 56 92 74 86" fill="none" stroke="var(--cutout-color)" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Title & Expiry -->
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold mb-1" style="font-family: 'Mitr', sans-serif;">QUICK CUP</h2>
+                        <p class="text-[12px] text-white/60 font-medium" style="font-family: 'Bai Jamjuree', sans-serif;">ใช้ได้ถึง 31.12.2026</p>
+                    </div>
+
+                    <!-- Status Row -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-2.5">
+                            <span class="bg-[#00d18b] text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-star text-[8px]"></i> ของรางวัล
+                            </span>
+                            <span id="stamp-status-text" class="text-[13px] font-medium text-white/90" style="font-family: 'Bai Jamjuree', sans-serif;">อีก 10 แก้วจะได้รับของรางวัล</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-up text-white/50 text-xs"></i>
+                    </div>
+                    
+                    <!-- Stamp Grid -->
+                    <div id="stamp-grid" class="stamp-grid mb-8"></div>
+                    
+                    <!-- Pagination Dots -->
+                    <div class="flex justify-center gap-1.5 mt-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-white/30"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-white/30"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="p-8 -mt-10 relative z-20 bg-white rounded-t-[3.5rem] space-y-8 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+                <!-- 2. Wallet Section -->
+                <div class="bg-cream p-8 rounded-[2.5rem] border border-gray-100 flex items-center justify-between shadow-inner">
+                    <div class="space-y-1">
+                        <h4 id="display-points" class="text-5xl font-black font-heading text-gray-800 tracking-tighter italic leading-none">0</h4>
+                        <p class="text-[11px] text-gray-500 font-medium mt-2" style="font-family: 'Bai Jamjuree';">สะสมจากยอดซื้อทุก 10 บาท = 1 แต้ม</p>
+                    </div>
+                    <div class="w-14 h-14 bg-wood-brown rounded-3xl flex items-center justify-center text-white shadow-xl rotate-3"><i class="fa-solid fa-coins text-2xl"></i></div>
+                </div>
+                
+                <!-- 3. Reward Tabs -->
+                <div>
+                    <div class="flex gap-8 border-b border-gray-100 mb-6">
+                        <button class="reward-tab-btn active pb-3 text-sm font-bold font-heading border-b-2 border-forest text-forest" onclick="switchRewardTab('locked', this)">รางวัลที่รอรับ</button>
+                        <button class="reward-tab-btn pb-3 text-sm font-bold font-heading text-gray-400 border-b-2 border-transparent" onclick="switchRewardTab('unlocked', this)">ได้รับแล้ว</button>
+                    </div>
+                    <div id="reward-list-container" class="space-y-4"></div>
+                </div>
+                
+                <!-- 4. Terms & Conditions -->
+                <div class="bg-gray-50 rounded-[2rem] p-6 border border-gray-100">
+                    <h4 class="font-heading text-xs font-bold text-gray-800 mb-4 uppercase tracking-widest"><i class="fa-solid fa-circle-info text-forest mr-1"></i> หมายเหตุและเงื่อนไข</h4>
+                    <ul class="text-[11px] text-gray-500 space-y-2.5 list-none" style="font-family: 'Bai Jamjuree';">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-forest mt-0.5 text-[10px]"></i> แสตมป์จะได้ 1 ดวงต่อการซื้อเครื่องดื่ม 1 แก้ว</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-forest mt-0.5 text-[10px]"></i> แต้มสะสมไม่สามารถแลกเปลี่ยนหรือทอนเป็นเงินสดได้</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-forest mt-0.5 text-[10px]"></i> สิทธิ์การแลกของรางวัลเป็นไปตามที่ร้านกำหนด</li>
+                    </ul>
+                </div>
+
+                <!-- 4. Shortcuts -->
+                <div class="grid grid-cols-3 gap-3 pb-8">
+                    <div class="flex flex-col items-center gap-3 p-5 bg-gray-50 rounded-[2rem] border border-gray-100 cursor-pointer transition-all hover:bg-gray-100 hover:shadow-sm" onclick="showInfoModal('history')">
+                        <i class="fa-solid fa-clock-rotate-left text-wood-brown text-xl"></i>
+                        <span class="text-[10px] font-bold text-gray-600 font-heading text-center leading-tight">ประวัติ<br>รับแต้ม</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-3 p-5 bg-gray-50 rounded-[2rem] border border-gray-100 cursor-pointer transition-all hover:bg-gray-100 hover:shadow-sm" onclick="showInfoModal('premium')">
+                        <i class="fa-solid fa-gem text-wood-brown text-xl"></i>
+                        <span class="text-[10px] font-bold text-gray-600 font-heading text-center leading-tight">ของรางวัล<br>พรีเมียม</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-3 p-5 bg-gray-50 rounded-[2rem] border border-gray-100 cursor-pointer transition-all hover:bg-gray-100 hover:shadow-sm" onclick="showInfoModal('chat')">
+                        <i class="fa-solid fa-comment-dots text-wood-brown text-xl"></i>
+                        <span class="text-[10px] font-bold text-gray-600 font-heading text-center leading-tight">แชทสอบถาม<br>พนักงาน</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 5. Sticky Footer: Scan QR -->
+            <div class="fixed bottom-0 left-0 right-0 p-6 bg-white/95 backdrop-blur-md border-t flex justify-center z-[210] shadow-[0_-10px_30px_rgba(0,0,0,0.05)] pb-8">
+                <button onclick="showToast('เปิดกล้องสแกน QR Code...')" class="w-full max-w-md bg-[#1e293b] text-white py-4 rounded-[2.5rem] font-bold text-sm shadow-xl active:scale-95 transition-all uppercase font-heading tracking-widest flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-qrcode text-xl text-white"></i> สแกนรับแต้ม / แสตมป์
+                </button>
+            </div>
+        </main>
+
+        <!-- Page: Profile -->
+        <main id="page-profile" class="flex-grow hidden p-6 bg-gray-50 overflow-y-auto no-scrollbar">
+            <div class="max-w-2xl mx-auto space-y-6 pb-24">
+                <div class="flex items-center gap-4 mb-4"><button onclick="showPage('page-menu')" class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-gray-400 shadow-sm transition-all hover:bg-gray-100"><i class="fa-solid fa-arrow-left"></i></button><h2 class="text-2xl font-bold font-heading text-gray-800 tracking-tight">Settings</h2></div>
+                <div class="profile-item-card">
+                    <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-6">Personal Account</h4>
+                    <div class="flex items-center gap-6 mb-8 p-4 bg-gray-50 rounded-3xl">
+                        <div class="relative">
+                            <div class="w-24 h-24 bg-gray-100 rounded-[2.5rem] flex items-center justify-center text-4xl text-gray-300 border-4 border-white shadow-md overflow-hidden">
+                                <img id="avatar-preview" src="https://i.pinimg.com/236x/e8/bb/bc/e8bbbcafc1e99c1d20bf22ba607a2ce3.jpg" class="w-full h-full object-cover"><i id="avatar-placeholder" class="fa-solid fa-user hidden"></i>
+                            </div>
+                            <button class="absolute -bottom-1 -right-1 w-9 h-9 bg-forest text-white rounded-full border-4 border-white shadow-sm flex items-center justify-center" onclick="document.getElementById('avatar-input').click()"><i class="fa-solid fa-camera text-xs"></i></button>
+                            <input type="file" id="avatar-input" class="hidden" accept="image/*" onchange="handleAvatarUpload(this)">
+                        </div>
+                        <div class="flex-grow"><h3 id="profile-display-name-info" class="text-xl font-bold font-heading text-gray-800 leading-none">คุณซาโตรุ โกโจ</h3><p id="profile-email-mask" class="text-xs text-gray-400 mt-1 font-medium italic">**Gojo*@mail.com</p></div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="space-y-1.5"><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Display Name</label><input type="text" id="input-name" value="คุณซาโตรุ โกโจ" class="w-full p-4 bg-gray-50 rounded-2xl border-none focus:ring-1 focus:ring-forest text-sm font-medium"></div>
+                        <div class="space-y-1.5"><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">About Me</label><textarea id="input-bio" rows="2" class="w-full p-4 bg-gray-50 rounded-2xl border-none focus:ring-1 focus:ring-forest text-sm font-medium resize-none">Ryouiki Tenkai.</textarea></div>
+                        <button onclick="saveProfile()" class="w-full px-10 py-4 bg-forest text-white rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all font-heading">Save Changes</button>
+                    </div>
+                </div>
+                <div class="profile-item-card space-y-4">
+                    <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] font-heading">Preferences</h4>
+                    <div class="flex items-center justify-between p-2"><span class="text-sm font-bold text-gray-700">Dark Mode</span><input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()" class="w-5 h-5 accent-forest rounded"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Page: Basket (Confirm Order) -->
+        <main id="page-cart" class="fixed inset-0 z-[300] bg-gray-50 hidden p-6 flex flex-col overflow-y-auto">
+            <div class="max-w-2xl mx-auto w-full flex flex-col min-h-full">
+                <div class="flex items-center gap-4 mb-8"><button onclick="showPage('page-menu')" class="p-2 text-gray-400"><i class="fa-solid fa-arrow-left"></i></button><h2 class="text-2xl font-bold font-heading text-gray-800">My Basket</h2></div>
+                
+                <div id="cart-list" class="flex-grow space-y-4 mb-6 no-scrollbar"></div>
+                
+                <!-- Promo Code Section -->
+                <div id="cart-promo-container" class="mb-6"></div>
+                
+                <div class="bg-white rounded-[3.5rem] p-10 shadow-sm border border-gray-50 mb-6">
+                    <div id="price-summary-container"></div>
+                    <div class="pt-6 font-medium text-gray-400 text-xs italic flex items-center gap-2"><i class="fa-solid fa-clock text-forest text-xs"></i> Pickup: <input type="time" id="pickup-time" class="bg-transparent font-bold text-gray-800 focus:outline-none cursor-pointer"></div>
+                </div>
+                <div class="flex gap-3 sticky bottom-0 pt-2 pb-6 bg-gray-50">
+                    <button onclick="clearCart()" class="w-16 h-16 bg-red-100 text-red-500 rounded-2xl flex items-center justify-center active:scale-90 transition-all"><i class="fa-solid fa-trash-can"></i></button>
+                    <button onclick="showPage('page-payment')" class="flex-grow bg-forest text-white py-5 rounded-[2.25rem] font-bold text-lg shadow-xl active:scale-95 transition-all uppercase font-heading tracking-widest">Pay with PromptPay</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Page: Payment (Redesigned matching Fauget Coffee style) -->
+        <main id="page-payment" class="fixed inset-0 z-[310] bg-[#E6DFD4] hidden flex flex-col justify-between overflow-hidden transition-all relative font-['Bai_Jamjuree']">
+            
+            <!-- Background Line Art (Absolute) -->
+            <!-- Dripper (Top Right) -->
+            <svg viewBox="0 0 200 250" class="absolute -right-12 -top-10 w-[280px] opacity-40 pointer-events-none" fill="none" stroke="#E86A11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M 40 40 L 160 40 L 100 120 Z" />
+                <path d="M 20 20 L 60 40 M 180 20 L 140 40" />
+                <path d="M 50 100 L 150 100 C 140 140 160 160 160 200 C 160 230 140 240 100 240 C 60 240 40 230 40 200 C 40 160 60 140 50 100 Z" />
+                <path d="M 45 130 C 80 140 120 140 155 130" />
+                <path d="M 48 140 C 80 150 120 150 152 140" />
+                <circle cx="100" cy="140" r="4" fill="#E6DFD4" />
+                <path d="M 100 144 Q 90 180 80 190 M 100 144 Q 110 180 120 190" />
+                <path d="M 42 190 C 80 200 120 200 158 190" />
+            </svg>
+
+            <!-- Portafilter (Top Left) -->
+            <svg viewBox="0 0 150 150" class="absolute -left-10 top-[15%] w-44 opacity-40 pointer-events-none transform -rotate-12" fill="none" stroke="#E86A11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <!-- handle -->
+                <rect x="10" y="55" width="50" height="14" rx="4" />
+                <!-- body -->
+                <path d="M 60 50 L 120 50 C 120 80 110 90 90 90 C 70 90 60 80 60 50 Z" />
+                <line x1="55" y1="50" x2="125" y2="50" />
+                <line x1="58" y1="40" x2="122" y2="40" />
+                <!-- spouts -->
+                <path d="M 75 90 C 75 100 70 105 65 110" />
+                <path d="M 105 90 C 105 100 110 105 115 110" />
+                <!-- drops -->
+                <circle cx="65" cy="120" r="2" fill="#E86A11" />
+                <circle cx="115" cy="120" r="2" fill="#E86A11" />
+            </svg>
+
+            <!-- Beans (Middle Right) -->
+            <svg viewBox="0 0 100 100" class="absolute right-4 top-[35%] w-24 opacity-40 pointer-events-none transform rotate-12" fill="none" stroke="#E86A11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M 30 20 C 50 10 70 30 60 50 C 40 60 20 40 30 20 Z" />
+                <path d="M 35 25 C 45 35 55 45 50 55" />
+                <path d="M 70 50 C 90 40 100 60 90 80 C 70 90 60 70 70 50 Z" />
+                <path d="M 75 55 C 85 65 90 70 85 80" />
+            </svg>
+
+            <!-- Coffee Plant Leaf (Middle Left) -->
+            <svg viewBox="0 0 100 200" class="absolute left-4 top-[38%] w-20 opacity-40 pointer-events-none transform rotate-6" fill="none" stroke="#E86A11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M 40 180 Q 20 100 60 20" /> <!-- stem -->
+                <path d="M 35 140 Q 5 120 10 90 Q 30 100 32 115" /> <!-- leaf 1 -->
+                <path d="M 30 100 Q 60 110 80 80 Q 60 60 40 80" /> <!-- leaf 2 -->
+                <path d="M 45 60 Q 15 50 20 20 Q 40 20 55 40" /> <!-- leaf 3 -->
+                <circle cx="35" cy="125" r="3" fill="#E86A11" /> <!-- berry -->
+                <circle cx="45" cy="90" r="3" fill="#E86A11" /> <!-- berry -->
+            </svg>
+
+            <!-- Paper Cup (Bottom Right) -->
+            <svg viewBox="0 0 150 200" class="absolute -right-4 top-[50%] w-48 opacity-40 pointer-events-none transform -rotate-6" fill="none" stroke="#E86A11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M 30 40 L 120 40 L 100 180 C 98 190 90 195 80 195 L 70 195 C 60 195 52 190 50 180 Z" />
+                <path d="M 20 40 C 20 20 130 20 130 40 Z" />
+                <line x1="20" y1="40" x2="130" y2="40" />
+                <circle cx="75" cy="25" r="4" />
+                <path d="M 38 100 L 112 100 L 108 140 L 42 140 Z" />
+                <path d="M 38 100 C 60 110 90 110 112 100" />
+                <path d="M 42 140 C 60 150 90 150 108 140" />
+            </svg>
+
+            <!-- Croissant (Bottom Left) -->
+            <svg viewBox="0 0 200 150" class="absolute -left-12 bottom-[18%] w-56 opacity-40 pointer-events-none transform rotate-[20deg]" fill="none" stroke="#E86A11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M 40 90 C 30 50 80 20 140 50 C 180 70 170 120 130 110 C 90 100 50 130 40 90 Z" />
+                <path d="M 60 80 C 80 50 120 40 145 60" />
+                <path d="M 75 95 C 100 70 130 65 135 85" />
+                <path d="M 35 95 C 25 85 20 70 30 65" />
+                <path d="M 155 60 C 170 65 175 90 145 100" />
+                <path d="M 40 90 C 45 105 60 115 75 105" />
+                <path d="M 130 110 C 145 125 160 115 155 100" />
+            </svg>
+
+            <!-- Sparkles Decor -->
+            <svg viewBox="0 0 50 50" class="absolute left-[50%] top-[8%] w-8 opacity-50 pointer-events-none" fill="none" stroke="#E86A11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M 25 5 L 25 45 M 5 25 L 45 25" />
+                <path d="M 12 12 L 38 38 M 12 38 L 38 12" opacity="0.4" />
+            </svg>
+
+            <!-- Main Content Area -->
+            <div class="relative z-10 px-8 pt-12 pb-6 flex-grow flex flex-col">
+                <!-- Brand Text -->
+                <h4 class="text-[#452A1B] font-bold text-xs uppercase tracking-wider mb-6 font-heading">Quick Cup Coffee</h4>
+                
+                <!-- Big Headline -->
+                <h1 class="text-[3.5rem] font-black font-heading text-[#452A1B] leading-[1.05] tracking-tighter mb-8">
+                    Brew Up<br>Some<br>Surprises!
+                </h1>
+
+                <!-- Scan Section -->
+                <div class="relative mt-2 flex flex-col items-start">
+                    <!-- Scan Me Text & Arrow -->
+                    <div class="flex items-end gap-1 mb-2 pl-2">
+                        <span class="text-[#E86A11] text-4xl leading-none" style="font-family: 'Caveat', cursive;">Scan Me</span>
+                        <svg width="60" height="40" viewBox="0 0 100 100" class="transform -translate-y-2 translate-x-2" fill="none" stroke="#E86A11" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M 10 10 Q 50 -10 80 50" />
+                            <path d="M 60 45 L 80 50 L 85 30" />
+                        </svg>
+                    </div>
+
+                    <!-- QR Box -->
+                    <div class="bg-white p-5 w-[220px] h-[220px] shadow-xl relative z-20 flex flex-col items-center justify-center">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=QUICKCUP-PAYMENT" alt="QR Code" class="w-full h-full object-cover mix-blend-multiply">
+                    </div>
+
+                    <!-- Price Info -->
+                    <div class="mt-6 bg-white/60 backdrop-blur-md px-6 py-4 rounded-2xl border border-[#452A1B]/10 inline-block shadow-sm z-20">
+                        <p class="text-[#452A1B] text-[10px] font-bold uppercase tracking-widest mb-1">ยอดชำระสุทธิ (Total)</p>
+                        <p class="text-4xl font-black text-[#E86A11] font-heading tracking-tighter" id="payment-total-amount">฿0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Section -->
+            <div class="relative z-10 px-8 pb-8 w-full mt-auto">
+                <button onclick="completePayment()" class="w-full bg-[#452A1B] text-[#E6DFD4] py-4 rounded-xl font-bold text-lg shadow-xl mb-3 uppercase font-heading tracking-widest active:scale-95 transition-all hover:bg-[#321e14]">ชำระเงินสำเร็จ</button>
+                <button onclick="showPage('page-cart')" class="text-[#452A1B] font-bold hover:text-[#E86A11] transition-colors uppercase text-xs tracking-widest py-3 text-center w-full">ยกเลิก / ย้อนกลับ</button>
+                
+                <!-- Footer Details -->
+                <div class="flex justify-between items-center text-[9px] text-[#452A1B] mt-6 pt-4 border-t border-[#452A1B]/20 font-semibold font-heading tracking-wider opacity-80">
+                    <span>quickcup.app</span>
+                    <span>hello@quickcup.app</span>
+                    <span>012-345-6789</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Page: Queue Status -->
+        <main id="page-status" class="flex-grow hidden bg-white overflow-y-auto no-scrollbar pb-32">
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-10"><button onclick="showPage('page-menu')" class="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-600 shadow-sm"><i class="fa-solid fa-arrow-left"></i></button><h2 class="text-2xl font-bold font-heading text-gray-800">Status</h2></div>
+                <div class="text-center space-y-4 mb-12"><div class="w-28 h-28 bg-green-50 text-forest rounded-full flex items-center justify-center text-4xl mx-auto shadow-sm relative"><i id="status-main-icon" class="fa-solid fa-mug-hot animate-bounce"></i></div><h3 id="status-main-text" class="text-3xl font-black text-forest font-heading tracking-tight italic text-forest uppercase">Preparing...</h3></div>
+                <div class="bg-gray-50 rounded-[2.5rem] p-8 space-y-8 relative overflow-hidden"><div class="absolute left-12 top-10 bottom-10 w-0.5 bg-gray-200"></div><div class="flex items-start gap-6 relative z-10"><div class="status-dot active mt-1.5 ml-[1.1rem]"></div><div id="step-1-text" class="flex-grow font-heading text-sm text-gray-800 font-bold">ยืนยันออเดอร์</div></div><div class="flex items-start gap-6 relative z-10"><div id="step-2-dot" class="status-dot active mt-1.5 ml-[1.1rem]"></div><div id="step-2-text" class="flex-grow font-heading text-sm text-forest font-bold">กำลังรังสรรค์เมนู</div></div><div class="flex items-start gap-6 relative z-10"><div id="step-3-dot" class="status-dot mt-1.5 ml-[1.1rem]"></div><div id="step-3-text" class="flex-grow opacity-30 font-heading text-sm text-gray-800 font-bold">พร้อมรับสินค้า</div></div></div>
+                <div class="mt-8 bg-white border border-gray-100 p-8 rounded-[2.5rem] shadow-sm text-center"><p class="text-[10px] text-gray-400 uppercase font-black mb-2 tracking-widest">Queue</p><h3 class="text-7xl font-black text-gray-800 font-heading tracking-tighter">Q-01</h3><div class="mt-6 pt-6 border-t border-dashed border-gray-100 font-bold text-forest text-sm italic uppercase tracking-widest" id="ready-time-text"></div></div>
+                <div class="mt-8 space-y-3">
+                    <button onclick="confirmOrderReceived()" class="w-full bg-forest text-white py-4 rounded-3xl font-bold text-sm uppercase font-heading tracking-widest shadow-xl shadow-green-900/20 flex items-center justify-center gap-2 active:scale-95 transition-all"><i class="fa-solid fa-circle-check"></i> ฉันได้รับสินค้าแล้ว</button>
+                    <div class="flex gap-3"><button onclick="showPage('page-menu')" class="flex-1 bg-gray-100 text-gray-600 py-4 rounded-3xl font-bold text-sm uppercase font-heading">Menu</button><button onclick="toggleModal('modal-receipt')" class="flex-1 bg-gray-900 text-white py-4 rounded-3xl font-bold text-sm flex items-center justify-center gap-3 uppercase font-heading tracking-widest shadow-xl shadow-gray-200"><i class="fa-solid fa-qrcode text-xs"></i> Receipt</button></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Customize Overlay -->
+        <div id="page-customize-overlay" class="fixed inset-0 z-[200] bg-white hidden overflow-y-auto no-scrollbar">
+            <div class="relative h-80"><img id="cust-img-overlay" src="" class="w-full h-full object-cover shadow-sm"><button onclick="hideCustomizeOverlay()" class="absolute top-6 left-6 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg"><i class="fa-solid fa-xmark text-gray-800"></i></button></div>
+            <div class="p-8 max-w-2xl mx-auto pb-48">
+                <h2 id="cust-name-overlay" class="text-3xl font-black font-heading text-[#1e293b] leading-tight mb-2 uppercase italic tracking-tighter"></h2>
+                <p id="cust-price-overlay" class="text-forest text-xl font-bold mb-8 font-heading"></p>
+                <div class="mb-10 border border-gray-100 rounded-[2rem] overflow-hidden bg-gray-50 shadow-sm"><button class="w-full flex justify-between items-center p-6" onclick="toggleAccordion('acc-desc-ov')"><span class="font-bold text-forest text-sm uppercase tracking-widest font-heading"><i class="fa-solid fa-circle-info text-forest"></i> Details</span><i class="fa-solid fa-chevron-down text-xs transition-transform" id="acc-desc-ov-icon"></i></button><div id="acc-desc-ov" class="hidden p-6 text-sm text-gray-600 leading-relaxed border-t bg-white font-normal" style="font-family: 'Bai Jamjuree'"><div id="cust-desc-overlay"></div></div></div>
+                <div id="drink-options-container" class="space-y-12">
+                    <div id="temp-selection-container" class="hidden"><h4 class="font-bold mb-4 font-heading italic uppercase tracking-widest text-[10px]">Select Temperature</h4><div class="grid grid-cols-3 gap-3" id="temp-group"></div></div>
+                    <div id="size-selection-container" class="hidden"><h4 class="font-bold mb-4 font-heading italic uppercase tracking-widest text-[10px]">Select Size</h4><div class="space-y-3" id="size-group"></div></div>
+                    <div><div class="flex justify-between items-center mb-6 font-heading tracking-wide uppercase text-[10px]"><h4 class="font-bold italic">Sweetness</h4><span id="sweet-val-overlay" class="text-forest font-black">50%</span></div><input type="range" min="0" max="4" step="1" value="2" class="sweetness-slider" id="sweet-slider-overlay" oninput="updateSweetLabelOverlay(this.value)"><div class="flex justify-between text-[10px] text-gray-400 mt-4 font-bold uppercase tracking-widest"><span>0%</span><span>25%</span><span>50%</span><span>100%</span><span>120%</span></div></div>
+                    <div id="milk-selection-overlay-container"><h4 class="font-bold mb-6 font-heading italic uppercase tracking-widest text-[10px]">Milk Selection</h4><div class="grid grid-cols-1 gap-3"><label class="flex items-center justify-between p-4 border border-gray-100 rounded-2xl cursor-pointer has-[:checked]:bg-[#ecfdf5] transition-all"><div class="flex items-center gap-3"><input type="radio" name="milk-ov" value="Cow" checked class="accent-forest" onchange="updateOverlayPrice()"><span>นมวัว</span></div><span class="text-xs font-bold text-gray-400">+0฿</span></label><label class="flex items-center justify-between p-4 border border-gray-100 rounded-2xl cursor-pointer has-[:checked]:bg-[#ecfdf5] transition-all"><div class="flex items-center gap-3"><input type="radio" name="milk-ov" value="Almond" class="accent-forest" onchange="updateOverlayPrice()"><span>นม Almond</span></div><span class="text-forest text-xs font-bold">+10฿</span></label><label class="flex items-center justify-between p-4 border border-gray-100 rounded-2xl cursor-pointer has-[:checked]:bg-[#ecfdf5] transition-all"><div class="flex items-center gap-3"><input type="radio" name="milk-ov" value="Oat" class="accent-forest" onchange="updateOverlayPrice()"><span>นม Oat</span></div><span class="text-forest text-xs font-bold">+10฿</span></label></div></div>
+                </div>
+                <div id="bakery-controls-overlay" class="hidden"><h4 class="font-bold mb-6 font-heading text-[10px] uppercase tracking-widest italic">Preparation</h4><div class="space-y-3"><label class="flex items-center p-4 border border-gray-100 rounded-2xl has-[:checked]:bg-[#ecfdf5] transition-all"><input type="radio" name="prep-ov" value="Heated" checked class="mr-4 accent-forest"> อุ่นร้อนพร้อมทาน (Heated)</label><label class="flex items-center p-4 border border-gray-100 rounded-2xl has-[:checked]:bg-[#ecfdf5] transition-all"><input type="radio" name="prep-ov" value="Normal" class="mr-4 accent-forest"> ไม่ต้องอุ่น (Normal)</label></div></div>
+            </div>
+            <div class="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t flex justify-center z-[210] shadow-inner"><button onclick="addToCartFromOverlay()" class="w-full max-w-md bg-forest text-white py-5 rounded-[2.5rem] font-bold text-lg shadow-xl active:scale-95 transition-all uppercase font-heading tracking-tighter">Add to basket</button></div>
+        </div>
+
+        <!-- Reward Preview Modal -->
+        <div id="modal-reward-preview" class="fixed inset-0 z-[1200] bg-black/60 hidden flex items-center justify-center p-6 backdrop-blur-sm">
+            <div class="bg-white rounded-[3rem] w-full max-w-sm overflow-hidden shadow-2xl relative">
+                <button onclick="toggleModal('modal-reward-preview')" class="absolute top-6 right-6 w-9 h-9 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:bg-black/40 z-10"><i class="fa-solid fa-xmark"></i></button>
+                <div class="w-full h-[250px] relative">
+                    <img id="reward-prev-img" src="" class="w-full h-full object-cover">
+                </div>
+                <div class="p-8 text-center">
+                    <h3 id="reward-prev-title" class="text-xl font-black font-heading text-gray-800 mb-3 leading-tight"></h3>
+                    <p id="reward-prev-desc" class="text-xs text-gray-500 leading-relaxed font-normal mb-8" style="font-family: 'Bai Jamjuree';"></p>
+                    <button onclick="toggleModal('modal-reward-preview'); use20Discount();" class="w-full bg-forest text-white py-4 rounded-2xl font-bold font-heading uppercase tracking-widest text-xs shadow-xl active:scale-95 transition-all">ใช้คูปองนี้</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt Modal -->
+        <div id="modal-receipt" class="fixed inset-0 z-[1100] bg-black/60 hidden flex items-center justify-center p-6 backdrop-blur-sm">
+            <div class="bg-white rounded-[3rem] p-8 w-full max-w-sm text-center shadow-2xl relative"><button onclick="toggleModal('modal-receipt')" class="absolute top-4 right-4 text-gray-300 hover:text-gray-800"><i class="fa-solid fa-circle-xmark text-xl"></i></button><h3 class="font-heading text-xl font-bold text-gray-800 italic uppercase">Receipt</h3><div class="bg-gray-50 p-6 rounded-3xl border-2 border-dashed border-gray-200 my-6 text-center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=QUICKCUP-ORDER-Q01" class="w-32 h-32 mx-auto mb-4" alt="QR"><h4 class="text-4xl font-black text-forest font-heading tracking-tighter">Q-01</h4></div><button onclick="toggleModal('modal-receipt')" class="w-full bg-forest text-white py-4 rounded-2xl font-bold font-heading uppercase tracking-widest text-xs">Close</button></div>
+        </div>
+
+        <!-- Info Modal (History, Premium, Chat) -->
+        <div id="modal-info" class="fixed inset-0 z-[1200] bg-black/60 hidden flex items-center justify-center p-6 backdrop-blur-sm">
+            <div class="bg-white rounded-[3rem] w-full max-w-sm overflow-hidden shadow-2xl relative">
+                <button onclick="toggleModal('modal-info')" class="absolute top-6 right-6 w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 transition-all hover:bg-gray-200"><i class="fa-solid fa-xmark"></i></button>
+                <div class="p-10 text-center">
+                    <div id="info-icon" class="w-20 h-20 bg-forest/5 rounded-full flex items-center justify-center text-4xl text-forest mx-auto mb-6"></div>
+                    <h3 id="info-title" class="text-2xl font-black font-heading text-gray-800 mb-4 uppercase tracking-tighter leading-none"></h3>
+                    <div id="info-content" class="text-sm text-gray-500 leading-relaxed space-y-4 font-normal" style="font-family: 'Bai Jamjuree';"></div>
+                    <button onclick="toggleModal('modal-info')" class="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold font-heading mt-10 uppercase tracking-widest text-xs italic">Okay</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promotion Modal -->
+        <div id="modal-promotion" class="fixed inset-0 z-[1250] bg-black/60 hidden flex items-center justify-center p-6 backdrop-blur-sm">
+            <div class="bg-white rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-2xl relative">
+                <button onclick="toggleModal('modal-promotion')" class="absolute top-4 right-4 w-9 h-9 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:bg-black/40 z-10"><i class="fa-solid fa-xmark"></i></button>
+                <div class="w-full h-[280px] bg-[#f8f1ea] relative">
+                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80" alt="Promotion: Coffee and Bakery" class="w-full h-full object-cover object-center">
+                    <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 to-transparent flex items-end">
+                        <span class="bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-lg uppercase tracking-wider shadow-sm">Special Offer</span>
+                    </div>
+                </div>
+                <div class="p-8 text-center">
+                    <h3 class="text-xl font-black font-heading text-gray-800 mb-3 leading-tight">ส่วนลดเบเกอรี่ 50%<br>เมื่อสั่ง Signature</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed font-normal mb-6" style="font-family: 'Bai Jamjuree';">
+                        รับสิทธิ์แลกซื้อเบเกอรี่ในราคาลด 50% ทันทีเมื่อสั่งเครื่องดื่มในหมวด Signature เมนูใดก็ได้ (จำกัด 1 สิทธิ์ / 1 ใบเสร็จ)
+                    </p>
+                    <div class="bg-orange-50 border border-orange-100 rounded-2xl p-3 mb-6">
+                        <p class="text-[10px] font-bold text-orange-600 uppercase tracking-widest"><i class="fa-regular fa-clock"></i> วันนี้ - 31 ต.ค. นี้</p>
+                    </div>
+                    <button onclick="toggleModal('modal-promotion'); showPage('page-menu'); document.querySelectorAll('.cat-btn')[1].click();" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-bold font-heading uppercase tracking-widest text-xs shadow-lg shadow-orange-500/30 active:scale-95 transition-all">สั่งเลยตอนนี้</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Account Modal -->
+        <div id="modal-delete" class="fixed inset-0 z-[1300] bg-black/60 hidden flex items-center justify-center p-6 backdrop-blur-sm">
+            <div class="bg-white rounded-[3rem] p-10 w-full max-w-sm text-center shadow-2xl"><div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-6"><i class="fa-solid fa-triangle-exclamation"></i></div><h3 class="font-heading text-xl font-bold mb-2 text-gray-800">PDPA Delete</h3><p class="text-sm text-gray-400 mb-8 italic">Your data will be permanently removed.</p><div class="space-y-3"><button onclick="showToast('ลบบัญชีสำเร็จ'); setTimeout(()=>location.reload(), 2000)" class="w-full bg-red-500 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs">Confirm Delete</button><button onclick="toggleModal('modal-delete')" class="w-full text-gray-300 font-bold py-2 uppercase text-[10px]">Cancel</button></div></div>
+        </div>
+
+    </div>
+
+    <script>
+        const sweetnessMap = ["0%", "25%", "50%", "100%", "120%"];
+        const sizes = [
+            { id: 'S', label: 'Small (S)', desc: 'ร้อน 8 oz / เย็น 12 oz (รสเข้มข้น)', extra: 0 },
+            { id: 'M', label: 'Medium (M)', desc: 'ร้อน 12 oz / เย็น 16 oz [แนะนำ]', extra: 15 },
+            { id: 'L', label: 'Large (L)', desc: 'ร้อน 16 oz / เย็น 22 oz (ขนาดใหญ่)', extra: 30 }
+        ];
+
+        // ☕ 🍰 FULL MENU DATABASE (30+ ITEMS)
+        const products = [
+            // COFFEE Selection
+            { id: 1, cat: 'coffee', name: 'เอสเพรสโซ่ (Espresso)', price: 60, img: 'https://chaodoi.co.th/wp-content/uploads/2024/02/shutterstock_1918895903.jpeg', canHot: true, noMilk: true, inStock: true, desc: 'กาแฟช็อตเข้มข้นสไตล์อิตาลีแท้ กลิ่นหอมกรุ่น บอดี้แน่น เหมาะสำหรับผู้ที่ต้องการความสดชื่นเร่งด่วน' },
+            { id: 2, cat: 'coffee', name: 'อเมริกาโน่ (Americano)', price: 75, img: 'https://ukatocoffee.com/web/image/product.product/4/image_1024/Americano%20%E0%B9%80%E0%B8%A2%E0%B9%87%E0%B8%99?unique=fa48228', canHot: true, canIced: true, noMilk: true, inStock: true, desc: 'เอสเปรสโซ่ผสมน้ำเปล่า รสชาติสะอาด ดื่มง่าย ได้รสสัมผัสของเมล็ดกาแฟแท้แบบเต็มคำ' },
+            { id: 3, cat: 'coffee', name: 'คาเฟ่ ลาเต้ (Caffe Latte)', price: 85, img: 'https://as2.ftcdn.net/v2/jpg/00/75/89/49/1000_F_75894966_grMyKtLrU2dDQzMNKxtkN9PfDxg5iQpE.jpg', canHot: true, canIced: true, canFrappe: true, inStock: true, desc: 'กาแฟนมที่นุ่มนวลที่สุด รสชาติกลมกล่อมด้วยนมสดแท้ ท็อปด้วยฟองนมบางละเอียด' },
+            { id: 4, cat: 'coffee', name: 'คาปูชิโน่ (Cappuccino)', price: 85, img: 'https://images.ctfassets.net/0e6jqcgsrcye/6Dnzkf1ylG7IxDRG9Ez1Ia/0db4f0be1ff6199ae89afa4a0ae26687/How_to_make_a_perfect_cappuccino_at_home.jpg', canHot: true, canIced: true, canFrappe: true, inStock: true, desc: 'กาแฟนมที่เน้นความนุ่มของฟองนมหนานุ่ม ให้สัมผัสเบาสบายสลับกับความเข้มของกาแฟ' },
+            { id: 5, cat: 'coffee', name: 'แฟลต ไวท์ (Flat White)', price: 90, img: 'https://static.toiimg.com/thumb/86699095.cms?imgsize=59654&width=800&height=800', canHot: true, inStock: true, desc: 'ลาเต้ในสไตล์ออสเตรเลีย เนื้อสัมผัสเนียนละเอียด กาแฟเข้มข้นกว่าลาเต้ปกติ' },
+            { id: 6, cat: 'coffee', name: 'เดอร์ตี้ คอฟฟี่ (Dirty Coffee)', price: 110, img: 'https://miro.medium.com/v2/resize:fit:1200/1*X0fKjjDRVPRCgRxeacVEWw.png', canIced: true, sig: true, inStock: true, desc: 'Signature: กาแฟแยกชั้นระหว่างนมเย็นจัดด้านล่างและช็อตกาแฟร้อนด้านบน ให้รสสัมผัสที่แตกต่างในคำเดียว' },
+            { id: 7, cat: 'coffee', name: 'ยูซุ อเมริกาโน่ (Yuzu Americano)', price: 125, img: 'https://storage.googleapis.com/fastwork-static/240a3202-1b3b-4d3c-b1e6-416121d78449.jpg', canIced: true, sig: true, noMilk: true, inStock: true, desc: 'ความเข้มของกาแฟดำ ตัดกับความเปรี้ยวหวานสดชื่นจากส้มยูซุแท้ พร้อมเนื้อส้มให้เคี้ยวเพลิน' },
+            { id: 8, cat: 'coffee', name: 'โคโค่นัท คลาวด์ ลาเต้ (Coconut Cloud Latte)', price: 135, img: 'https://milkteamali.com/wp-content/uploads/2025/03/IMG_1403-scaled.jpg', canHot: true, canIced: true, sig: true, inStock: true, desc: 'ลาเต้ที่หอมละมุนด้วยน้ำมะพร้าวน้ำหอมธรรมชาติ หวานอ่อนๆ เหมือนจิบกาแฟอยู่ริมทะเล' },
+            { id: 9, cat: 'coffee', name: 'ไอน์สแพนเนอร์ (Einspänner)', price: 120, img: 'https://upload.wikimedia.org/wikipedia/commons/1/1e/Einspaenner.jpg', canHot: true, sig: true, inStock: true, desc: 'กาแฟดำเข้มข้น ท็อปด้วยวิปครีมสดเนื้อแน่น รสชาติหวานมันตัดกับความขมได้อย่างลงตัว' },
+            { id: 10, cat: 'coffee', name: 'แบล็ค ออเรนจ์ โทนิค (Black Orange Tonic)', price: 115, img: 'https://nabrunch.cz/wp-content/uploads/2026/02/ChatGPT-Image-4.-2.-2026-20_49_37-683x1024.png', canIced: true, sig: true, noMilk: true, inStock: true, desc: 'กาแฟส้มผสมโซดาทอนิก ให้ความซ่าสดชื่นและกลิ่นหอมของเลมอน เหมาะสำหรับช่วงบ่าย' },
+            
+            // NON-COFFEE Selection
+            { id: 11, cat: 'non-coffee', name: 'มัทฉะ ลาเต้ (Matcha Latte)', price: 115, img: 'https://www.finedininglovers.com/sites/default/files/styles/1_1_768x768/public/2026-02/matcha-latte.jpg.webp?h=4963bdfc&itok=PdfRJCgX', canHot: true, canIced: true, canFrappe: true, inStock: true, desc: 'มัทฉะเกรดพิธีการจากญี่ปุ่น สีเขียวสด กลิ่นหอมถั่วและสาหร่าย รสชาติเข้มข้นแบบต้นตำรับ' },
+            { id: 12, cat: 'non-coffee', name: 'โฮจิฉะ ลาเต้ (Hojicha Latte)', price: 115, img: 'https://teakandthyme.com/wp-content/uploads/2023/02/hojicha-latte-DSC_1551-1x1-1200.jpg', canHot: true, canIced: true, canFrappe: true, inStock: true, desc: 'ชามัทฉะคั่วจนเป็นสีน้ำตาล มีกลิ่นหอมควันไฟที่เป็นเอกลักษณ์ คาเฟ่อีนต่ำ ดื่มได้ทุกช่วงเวลา' },
+            { id: 13, cat: 'non-coffee', name: 'ชาไทย ซูพรีม (Thai Tea Supreme)', price: 85, img: 'https://static.thairath.co.th/media/PZnhTOtr5D3rd9ocKemRZvDPNhHgV4e3b4DwSVbvhFg8NM7.jpg', canHot: true, canIced: true, canFrappe: true, inStock: true, desc: 'ชาไทยสีส้มเข้มข้น สูตรพิเศษที่หอมกลิ่นชาไทยชัดเจน รสชาติหวานมันกำลังดี' },
+            { id: 14, cat: 'non-coffee', name: 'โกโก้เบลเยียม (Belgian Dark Cocoa)', price: 105, img: 'https://dhiferrari.co.nz/cdn/shop/files/84095790-7755-483F-9E3F-C3D499A1A78B.jpg?v=1772751485&width=400', canHot: true, canIced: true, canFrappe: true, inStock: true, desc: 'โกโก้เบลเยียมแท้รสเข้มข้นระดับ 70% เนื้อสัมผัสหนืดข้น หวานน้อยแต่เข้มถึงใจ' },
+            { id: 15, cat: 'non-coffee', name: 'นมชมพู ลาเต้ (Pink Milk Latte)', price: 75, img: 'https://i.pinimg.com/originals/bd/57/8f/bd578f55627761887f45ca74baf4361a.jpg', canHot: true, canIced: true, inStock: true, desc: 'นมชมพูในตำนานที่อัปเกรดด้วยนมสดคุณภาพดี ท็อปด้วยวิปครีมและซอสสตรอเบอร์รี่' },
+            
+            // REFRESHERS
+            { id: 16, cat: 'refreshers', name: 'สตรอว์เบอร์รี โมจิโต้ (Strawberry Mojito)', price: 115, img: 'https://jennyisbaking.com/wp-1c174-content/uploads/2018/05/DSC09767.jpg', canIced: true, noMilk: true, inStock: true, desc: 'ม็อกเทลไร้แอลกอฮอล์ที่รวมความเปรี้ยวจากมะนาว ความหอมจากใบมิ้นท์ และความหวานจากสตรอเบอร์รี่สด' },
+            { id: 17, cat: 'refreshers', name: 'เสาวรส สปาร์คกลิ้ง (Passion Fruit Sparkling)', price: 95, img: 'https://theforkedspoon.com/wp-content/uploads/2018/05/Sparkling-Pineapple-Passion-Fruit-Margarita-13.jpg', canIced: true, noMilk: true, inStock: true, desc: 'น้ำเสาวรสแท้ผสมโซดาซ่าๆ ให้ความเปรี้ยวจี๊ดจ๊าด ตื่นตัวทันทีที่ดื่ม' },
+            { id: 18, cat: 'refreshers', name: 'มิกซ์เบอร์รี่ สมูทตี้ (Mixed Berry Smoothie)', price: 125, img: 'https://poetryofspices.com/wp-content/uploads/2023/07/Mixed-Berry-smoothie.jpg', canFrappe: true, noMilk: true, inStock: true, desc: 'เบอร์รี่รวม 3 ชนิดปั่นจนเนื้อเนียนละเอียด ได้รสเปรี้ยวหวานแบบธรรมชาติ 100%' },
+            
+            // BAKERY
+            { id: 19, cat: 'bakery', name: 'บาสก์ ชีสเค้ก (Basque Burnt Cheesecake)', price: 165, img: 'https://ichef.bbci.co.uk/food/ic/food_16x9_1600/recipes/basque_burnt_cheesecake_12442_16x9.jpg', isFood: true, inStock: true, desc: 'ชีสเค้กหน้าไหม้สไตล์สเปน เนื้อสัมผัสครีมมี่นุ่มละลายในปาก มีกลิ่นหอมไหม้อ่อนๆ จากผิวหน้า' },
+            { id: 20, cat: 'bakery', name: 'สตรอว์เบอร์รี ชอร์ตเค้ก (Strawberry Shortcake)', price: 155, img: 'https://sophiasplate.com/wp-content/uploads/2025/06/0_3-1750457042976.webp', isFood: true, inStock: true, desc: 'เค้กครีมสดสไตล์ญี่ปุ่น เนื้อสปันจ์เบาหวิว สลับชั้นด้วยครีมสดและสตรอเบอร์รี่สดชิ้นโต' },
+            { id: 21, cat: 'bakery', name: 'บานอฟฟี่ พาย (Banoffee Pie)', price: 135, img: 'https://mccormick.widen.net/content/hdnyqpuqt5/jpeg/McCormick_Bridgerton_sweet_lemon_banoffee_pie_web_2025.jpg?crop=true&anchor=0,0&q=80&color=ffffffff&u=bqzncj&w=1620&h=1020', isFood: true, inStock: true, desc: 'พาย 5 ชั้นที่รวมความกรอบของแครกเกอร์ ความหวานของคาราเมล กล้วยหอม และความนุ่มของวิปครีม' },
+            { id: 22, cat: 'bakery', name: 'เลมอน ทาร์ต (Lemon Meringue Tart)', price: 125, img: 'https://eu-images.contentstack.com/v3/assets/blt03f8ae4f5ac044a7/blt9eca040a8890957e/68f8113f2966859175a6ce27/SDH_170324_2411_lemon-meringue-tart_angled3_MB_winter17-1-scaled.jpg?format=webp&quality=80&width=1380', isFood: true, inStock: true, desc: 'ทาร์ตรสเปรี้ยวจัดจ้านจากเลมอนคั้นสด ตัดความเปรี้ยวด้วยเมอแรงค์ไข่ขาวเผาไฟที่หวานนุ่ม' },
+            { id: 23, cat: 'bakery', name: 'เค้กมะพร้าวอ่อน (Young Coconut Cake)', price: 135, img: 'https://static.wixstatic.com/media/0dfde1_a96c3164b8004c7aa72ecc01db985278~mv2.jpg/v1/fill/w_472,h_630,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/0dfde1_a96c3164b8004c7aa72ecc01db985278~mv2.jpg', isFood: true, inStock: true, desc: 'เค้กมะพร้าวอ่อนซิกเนเจอร์ เนื้อเค้กชิฟฟอนนุ่มพิเศษ ราดด้วยซอสมะพร้าวอ่อนที่อัดแน่นด้วยเนื้อมะพร้าว' },
+            { id: 24, cat: 'bakery', name: 'ครัวซองต์เนย (Classic Butter Croissant)', price: 95, img: 'https://cms.starbucks.co.id/storage/image/temporary/summernote_image_1648784030.jpg', isFood: true, inStock: true, desc: 'ครัวซองต์เนยแท้จากฝรั่งเศส ผิวนอกกรอบเป็นเลเยอร์ชัดเจน ด้านในนุ่มชุ่มฉ่ำด้วยกลิ่นเนยหอมฟุ้ง' },
+            { id: 25, cat: 'bakery', name: 'ครัวซองต์อัลมอนด์ (Almond Croissant)', price: 115, img: 'https://teakandthyme.com/wp-content/uploads/2025/05/chocolate-almond-croissants-DSC_4863-1x1-1200.jpg', isFood: true, inStock: true, desc: 'ครัวซองต์สอดไส้ครีมอัลมอนด์รสหวานมัน โรยหน้าด้วยอัลมอนด์สไลด์กรุบกรอบและไอซิ่ง' },
+            { id: 26, cat: 'bakery', name: 'ขนมปังกระเทียม (Garlic Cream Cheese Bread)', price: 125, img: 'https://www.manilaspoon.com/wp-content/uploads/2026/01/Set-2-Cream-Cheese-Garlic-Bread-15-1440x2159.jpg', isFood: true, inStock: true, desc: 'ขนมปังทรงกลมชุบเนยกระเทียมหอมๆ สอดไส้ครีมชีสล้นทะลัก รสชาติเข้มข้นถูกใจสายชีส' },
+            { id: 27, cat: 'bakery', name: 'เดนิชผักโขม (Spinach & Cheese Danish)', price: 115, img: 'https://heresthedish.com/wp-content/uploads/2023/04/img_6564-edited.jpeg', isFood: true, inStock: true, desc: 'แป้งพัฟกรอบๆ ท็อปด้วยผักโขมผัดครีมและชีสเยิ้มๆ เป็นเมนูของคาวที่ทานคู่กับกาแฟได้ดีมาก' },
+            { id: 28, cat: 'bakery', name: 'ซอฟต์คุกกี้ (Soft Baked Choco-Chip Cookie)', price: 65, img: 'https://www.hersheyland.com/content/dam/hersheyland/en-us/recipes/recipe-images/18-hsy-chocolate-chip-cookie-updated-hero.jpg', isFood: true, inStock: true, desc: 'คุกกี้เนื้อนิ่มสไตล์อเมริกัน อัดแน่นด้วยช็อกโกแลตชิพแท้ๆ ที่จะละลายเมื่อสัมผัสลิ้น' },
+            { id: 29, cat: 'bakery', name: 'ฟัดจ์บราวนี่ (Fudge Brownie)', price: 85, img: 'https://i.ytimg.com/vi/qdxqip0Bgt8/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCPjO2A80XRgLsPVseoe9Q8KzCccA', isFood: true, inStock: true, desc: 'บราวนี่เนื้อหนึบ (Fudgy) รสเข้มข้นจากดาร์กช็อกโกแลต ไม่ร่วนซุย หวานพอดีคำ' },
+            { id: 30, cat: 'bakery', name: 'ขนมไข่เลมอน (Lemon Madeleines)', price: 95, img: 'https://olivesandlamb.com/wp-content/uploads/2024/05/Lemon-Olive-Oil-Basil-Madeleines-6-4x5-1-scaled.jpg', isFood: true, inStock: true, desc: 'ขนมไข่ฝรั่งเศสรูปทรงหอยเชลล์ เนื้อแน่นนุ่ม มีกลิ่นหอมสดชื่นจากผิวเลมอนขูด' }
+        ];
+
+        let cart = [];
+        let currentItem = null;
+        let currentPage = 1;
+        const itemsPerPage = 8;
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let isOrderActive = false;
+        let orderTimer = null; // ตัวแปรสำหรับจับเวลาออเดอร์
+        
+        let isPromoApplied = false; // ตัวแปรสถานะโปรโมชั่น (50% Bakery)
+        let promoUsed = false; // ตัวแปรเช็คว่าคูปอง 50% Bakery ถูกใช้ไปแล้วหรือยัง
+        
+        // ตัวแปรเพิ่มสำหรับ คูปองส่วนลด 20.-
+        let is20DiscountApplied = false;
+        let discount20Used = false;
+
+        let orderHistory = []; // เพิ่มตัวแปรสำหรับเก็บประวัติ
+        
+        // ตั้งค่าเริ่มต้นเป็น 0 แสตมป์และ 0 แต้ม เพื่อจำลองว่าเพิ่งเคยใช้งาน
+        let userStats = { stamps: 0, points: 0 };
+        let pendingStats = { stamps: 0, points: 0 }; // สถานะรอเพิ่มแต้มเมื่อรับของ
+        let userProfile = { name: "คุณซาโตรุ โกโจ", email: "satoru.gojo@mail.com", bio: "Coffee & Bakery enthusiast." };
+        let currentTemp = '';
+        let currentSize = 'M';
+
+        window.onload = () => { renderMenu(); generateTimeSlots(); updateDisplayPoints(); renderStampGrid(); switchRewardTab('locked'); setTimeout(() => { showToast("ยินดีต้อนรับสู่ QUICK CUP"); }, 1000); };
+
+        function toggleDarkMode() { const isDark = document.getElementById('dark-mode-toggle').checked; document.body.classList.toggle('dark-mode', isDark); showToast("สลับโหมดการแสดงผลสำเร็จ"); }
+
+        function handleAvatarUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('avatar-preview');
+                    const placeholder = document.getElementById('avatar-placeholder');
+                    const navImg = document.getElementById('nav-profile-img');
+                    if(preview) { preview.src = e.target.result; preview.classList.remove('hidden'); }
+                    if(navImg) { navImg.src = e.target.result; }
+                    if(placeholder) placeholder.classList.add('hidden');
+                    showToast("อัปโหลดรูปสำเร็จ");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function updateDisplayPoints() {
+            const p = document.getElementById('display-points');
+            const h = document.getElementById('reward-user-header');
+            const c = document.getElementById('reward-card-name');
+            const di = document.getElementById('profile-display-name-info');
+            if(p) p.innerText = userStats.points;
+            if(h) h.innerText = userProfile.name;
+            if(c) c.innerText = userProfile.name;
+            if(di) di.innerText = userProfile.name;
+        }
+
+        function toggleSearchBar() { const el = document.getElementById('search-overlay'); if(el) { el.classList.toggle('open'); if (el.classList.contains('open')) document.getElementById('search-input').focus(); } }
+        function toggleModal(id) { const el = document.getElementById(id); if (el) el.classList.toggle('hidden'); }
+
+        function renderMenu() {
+            const grid = document.getElementById('product-grid');
+            if (!grid) return;
+            let filtered = products;
+            if (currentFilter === 'signature') {
+                filtered = products.filter(p => p.sig);
+            } else if (currentFilter !== 'all') {
+                filtered = products.filter(p => p.cat === currentFilter);
+            }
+            if (searchQuery) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+            const start = (currentPage - 1) * itemsPerPage;
+            const paginated = filtered.slice(start, start + itemsPerPage);
+            grid.innerHTML = paginated.map(p => `
+                <div class="product-card group cursor-pointer" onclick="openCustomizeOverlay(${p.id})">
+                    <div class="aspect-square rounded-3xl overflow-hidden mb-3 relative shadow-sm border border-gray-100 bg-gray-50">
+                        <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                        ${p.sig ? '<span class="absolute top-2 left-2 bg-forest text-white text-[8px] px-2 py-1 rounded-full font-bold shadow-md tracking-tighter">SIGNATURE</span>' : ''}
+                        <div class="absolute bottom-2 right-2 bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg"><i class="fa-solid fa-plus text-forest text-xs"></i></div>
+                    </div>
+                    <h4 class="text-[11px] font-bold truncate px-1 font-heading text-gray-700 uppercase tracking-tighter">${p.name}</h4>
+                    <p class="text-forest font-black text-xs px-1">฿${p.price}</p>
+                </div>
+            `).join('');
+            renderPagination(filtered.length);
+        }
+
+        function renderPagination(total) {
+            const container = document.getElementById('pagination-container');
+            if (!container) return;
+            const totalPages = Math.ceil(total / itemsPerPage);
+            if (totalPages <= 1) { container.innerHTML = ''; return; }
+            let html = '';
+            for (let i = 1; i <= totalPages; i++) { html += `<button onclick="setPage(${i})" class="w-10 h-10 rounded-2xl font-bold text-xs transition-all ${currentPage === i ? 'bg-forest text-white shadow-lg' : 'bg-gray-100 text-gray-400'}">${i}</button>`; }
+            container.innerHTML = html;
+        }
+
+        function setPage(p) { currentPage = p; renderMenu(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function filterMenu(cat, el) { currentFilter = cat; currentPage = 1; document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active')); if (el) el.classList.add('active'); renderMenu(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function handleSearch() { searchQuery = document.getElementById('search-input').value; currentPage = 1; renderMenu(); }
+
+        function openCustomizeOverlay(id) {
+            const p = products.find(i => i.id === id);
+            if (!p) return;
+            currentItem = { ...p };
+            currentSize = 'M';
+            
+            document.getElementById('cust-img-overlay').src = p.img;
+            document.getElementById('cust-name-overlay').innerText = p.name;
+            document.getElementById('cust-desc-overlay').innerText = p.desc;
+            
+            const optionsBox = document.getElementById('drink-options-container');
+            const bakeryBox = document.getElementById('bakery-controls-overlay');
+            const tempBox = document.getElementById('temp-selection-container');
+            const sizeBox = document.getElementById('size-selection-container');
+            const milkBox = document.getElementById('milk-selection-overlay-container');
+
+            if (p.isFood) { 
+                optionsBox.classList.add('hidden'); 
+                bakeryBox.classList.remove('hidden');
+                currentItem.tempsData = [];
+            } else { 
+                optionsBox.classList.remove('hidden'); 
+                bakeryBox.classList.add('hidden');
+                let temps = [];
+                
+                // คำนวณราคาบวกเพิ่มสำหรับเมนูเย็นและปั่นตามเงื่อนไข
+                let icedExtra = (p.canHot || p.canFrappe) ? 10 : 0;
+                let frappeExtra = (p.canHot || p.canIced) ? 15 : 0;
+
+                if(p.canHot) temps.push({id:'Hot', label:'ร้อน', extra: 0});
+                if(p.canIced) temps.push({id:'Iced', label:'เย็น', extra: icedExtra});
+                if(p.canFrappe) temps.push({id:'Frappe', label:'ปั่น', extra: frappeExtra});
+                
+                currentItem.tempsData = temps;
+                currentTemp = p.canHot ? 'Hot' : (p.canIced ? 'Iced' : (p.canFrappe ? 'Frappe' : ''));
+
+                if(temps.length > 0 && tempBox) {
+                    tempBox.classList.remove('hidden');
+                    const tempGroup = document.getElementById('temp-group');
+                    if(tempGroup) {
+                        tempGroup.innerHTML = temps.map(t => `
+                            <button class="choice-btn flex-col justify-center items-center py-3 ${currentTemp === t.id ? 'selected' : ''}" onclick="setTemp('${t.id}', event)">
+                                <span class="label-text text-sm">${t.label}</span>
+                                ${t.extra > 0 ? `<span class="desc-text mt-0.5 font-bold">+${t.extra}฿</span>` : ''}
+                            </button>
+                        `).join('');
+                    }
+                } else if(tempBox) { 
+                    tempBox.classList.add('hidden'); 
+                }
+
+                if(sizeBox) {
+                    sizeBox.classList.remove('hidden');
+                    const sizeGroup = document.getElementById('size-group');
+                    if(sizeGroup) sizeGroup.innerHTML = sizes.map(s => `<button class="choice-btn w-full ${currentSize === s.id ? 'selected' : ''}" onclick="setSize('${s.id}', event)"><div class="text-left"><p class="label-text font-bold text-sm uppercase">${s.label}</p><p class="desc-text" style="color: ${currentSize === s.id ? '#FFFFFF' : 'var(--text-muted)'}">${s.desc}</p></div><span class="text-xs font-bold font-heading">+${s.extra}฿</span></button>`).join('');
+                }
+                if (milkBox) p.noMilk ? milkBox.classList.add('hidden') : milkBox.classList.remove('hidden');
+            }
+            updateOverlayPrice();
+            document.getElementById('page-customize-overlay').classList.remove('hidden');
+        }
+
+        function setTemp(t, e) { currentTemp = t; document.querySelectorAll('#temp-group .choice-btn').forEach(b => b.classList.remove('selected')); if(e) e.currentTarget.classList.add('selected'); updateOverlayPrice(); }
+        
+        function setSize(s, e) { 
+            currentSize = s; 
+            document.querySelectorAll('#size-group .choice-btn').forEach(b => { b.classList.remove('selected'); const d = b.querySelector('.desc-text'); if(d) d.style.color = 'var(--text-muted)'; }); 
+            if(e) { e.currentTarget.classList.add('selected'); const d = e.currentTarget.querySelector('.desc-text'); if(d) d.style.color = '#FFFFFF'; }
+            updateOverlayPrice(); 
+        }
+
+        function updateOverlayPrice() {
+            const sizeData = sizes.find(s => s.id === currentSize);
+            const tempObj = currentItem.tempsData ? currentItem.tempsData.find(t => t.id === currentTemp) : null;
+            const tempExtra = tempObj ? tempObj.extra : 0;
+
+            const milkInput = document.querySelector('input[name="milk-ov"]:checked');
+            const milk = milkInput ? milkInput.value : 'Cow';
+            
+            let extra = (sizeData ? sizeData.extra : 0) + tempExtra;
+            if (!currentItem.noMilk) {
+                if (milk === 'Almond' || milk === 'Oat') extra += 10;
+            }
+            
+            const pEl = document.getElementById('cust-price-overlay');
+            if(pEl) pEl.innerText = '฿' + (currentItem.price + extra);
+        }
+
+        function hideCustomizeOverlay() { document.getElementById('page-customize-overlay').classList.add('hidden'); }
+        function updateSweetLabelOverlay(v) { const el = document.getElementById('sweet-val-overlay'); if(el) el.innerText = sweetnessMap[v]; }
+        function toggleAccordion(id) { const el = document.getElementById(id); if(el) el.classList.toggle('hidden'); const icon = document.getElementById(id + '-icon'); if(icon) icon.classList.toggle('rotate-180'); }
+
+        function generateTimeSlots() {
+            const timeInput = document.getElementById('pickup-time');
+            if(!timeInput) return;
+            const now = new Date();
+            
+            // คำนวณเวลาเริ่มต้น (ปัจจุบัน + 15 นาที)
+            const asapTime = new Date(now.getTime() + 15 * 60000); 
+            const asapStr = asapTime.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', hour12: false });
+            
+            timeInput.value = asapStr; // กำหนดค่า default เป็นเวลา +15 นาที
+            timeInput.min = asapStr;   // ป้องกันการเลือกเวลาย้อนหลัง
+        }
+
+        function addToCartFromOverlay() {
+            let finalItemPrice = currentItem.price;
+            let optionsStr = '';
+
+            if (currentItem.isFood) {
+                // จัดการเฉพาะ Bakery ไม่เอาค่าเครื่องดื่มมาแสดง
+                const prepInput = document.querySelector('input[name="prep-ov"]:checked');
+                optionsStr = prepInput && prepInput.value === 'Heated' ? 'อุ่นร้อน (Heated)' : 'ไม่ต้องอุ่น (Normal)';
+                
+                cart.push({ 
+                    ...currentItem, 
+                    finalPrice: finalItemPrice, 
+                    optionsStr: optionsStr 
+                });
+            } else {
+                // จัดการเครื่องดื่ม
+                const sizeData = sizes.find(s => s.id === currentSize);
+                const tempObj = currentItem.tempsData ? currentItem.tempsData.find(t => t.id === currentTemp) : null;
+                const tempExtra = tempObj ? tempObj.extra : 0;
+
+                const milkInput = document.querySelector('input[name="milk-ov"]:checked');
+                const milk = currentItem.noMilk ? 'N/A' : (milkInput ? milkInput.value : 'Cow');
+                
+                const sweetSlider = document.getElementById('sweet-slider-overlay');
+                const sweet = sweetSlider ? sweetnessMap[sweetSlider.value] : sweetnessMap[2];
+                
+                let extra = (sizeData ? sizeData.extra : 0) + tempExtra;
+                if (milk === 'Almond' || milk === 'Oat') extra += 10;
+                finalItemPrice += extra;
+
+                optionsStr = `${currentTemp ? currentTemp + ' | ' : ''}${currentSize} | หวาน ${sweet}`;
+                if (milk === 'Almond') optionsStr += ' | นม Almond';
+                else if (milk === 'Oat') optionsStr += ' | นม Oat';
+                
+                cart.push({ 
+                    ...currentItem, 
+                    finalPrice: finalItemPrice, 
+                    milk, 
+                    sweet, 
+                    size: currentSize, 
+                    temp: currentTemp, 
+                    optionsStr: optionsStr 
+                });
+            }
+            
+            updateCartBadge(); hideCustomizeOverlay(); showToast('เพิ่มลงตะกร้าแล้ว');
+        }
+
+        function updateCartBadge() { const badge = document.getElementById('cart-count'); if (badge) badge.innerText = cart.length; }
+        
+        function togglePromo() {
+            if (promoUsed) {
+                showToast('คูปองถูกใช้ไปแล้ว');
+                return;
+            }
+            const hasSig = cart.some(i => i.sig);
+            const hasBakery = cart.some(i => i.cat === 'bakery');
+            if (hasSig && hasBakery) {
+                isPromoApplied = !isPromoApplied;
+                renderCart();
+                if(isPromoApplied) showToast('ใช้งานส่วนลด 50% สำเร็จ!');
+                else showToast('ยกเลิกส่วนลดแล้ว');
+            }
+        }
+
+        // ฟังก์ชันใหม่สำหรับคูปอง 20.-
+        function use20Discount() {
+            if (discount20Used) {
+                showToast('คูปองนี้ถูกใช้ไปแล้ว');
+                return;
+            }
+            
+            is20DiscountApplied = true;
+            
+            if (cart.length === 0) {
+                // ถ้าตะกร้ายังว่างอยู่ ให้จำค่าไว้แล้วพาไปหน้าเมนู
+                showToast('เตรียมคูปอง 20.- เรียบร้อย กรุณาเลือกเมนู');
+                showPage('page-menu');
+            } else {
+                // ถ้ามีของในตะกร้าอยู่แล้ว พาไปหน้าตะกร้าเลย
+                showToast('นำคูปอง 20.- ไปหักลบในตะกร้าแล้ว!');
+                showPage('page-cart');
+            }
+        }
+
+        function renderCart() {
+            const list = document.getElementById('cart-list');
+            if (!list) return;
+
+            // เช็คเงื่อนไขโปรโมชั่น 50%
+            const hasSig = cart.some(i => i.sig);
+            const hasBakery = cart.some(i => i.cat === 'bakery');
+            const promoValid = hasSig && hasBakery && !promoUsed;
+
+            if (!promoValid || promoUsed) {
+                isPromoApplied = false; // รีเซ็ตถ้าเงื่อนไขไม่ตรง หรือใช้ไปแล้ว
+            }
+            
+            // กรณีตะกร้าว่าง (ไม่รีเซ็ตค่า is20DiscountApplied เพื่อให้ระบบจำไว้ว่ากดเตรียมคูปองมาแล้ว)
+            if (cart.length === 0) { 
+                list.innerHTML = '<div class="text-center py-20 text-gray-300 italic font-bold">ตะกร้าว่างเปล่า</div>'; 
+                document.getElementById('cart-promo-container').innerHTML = '';
+                document.getElementById('price-summary-container').innerHTML = '<div class="flex justify-between items-center text-lg font-black border-b border-dashed pb-4 font-heading italic tracking-tighter text-gray-800"><span>Total</span><span class="text-forest">฿0</span></div>';
+                return; 
+            }
+
+            // Render Item List
+            list.innerHTML = cart.map((item, i) => `<div class="flex items-center gap-4 bg-white p-5 rounded-3xl border border-gray-100 shadow-sm"><img src="${item.img}" class="w-16 h-16 rounded-2xl object-cover shadow-sm"><div class="flex-grow"><h4 class="font-bold text-sm text-gray-800 font-heading leading-tight">${item.name}</h4><p class="text-[9px] text-gray-400 font-bold uppercase mt-1 tracking-widest">${item.optionsStr}</p></div><div class="text-right"><p class="text-forest font-black">฿${item.finalPrice}</p><button onclick="removeFromCart(${i})" class="text-red-400 text-[10px] font-bold mt-1 uppercase">ลบ</button></div></div>`).join('');
+            
+            // คำนวณราคา
+            let subtotal = cart.reduce((s, i) => s + i.finalPrice, 0);
+            
+            // ส่วนลดจากโปร 50%
+            let discountPromo = 0;
+            if (isPromoApplied && promoValid) {
+                // ลด 50% สำหรับเบเกอรี่ทั้งหมดในบิล
+                const bakeryTotal = cart.filter(i => i.cat === 'bakery').reduce((s, i) => s + i.finalPrice, 0);
+                discountPromo = Math.floor(bakeryTotal * 0.5);
+            }
+
+            // ส่วนลดจากคูปอง 20.-
+            let discount20Amt = 0;
+            if (is20DiscountApplied && !discount20Used) {
+                // ลด 20 บาท แต่ไม่ให้ยอดรวมติดลบ (กรณีซื้อของถูกกว่า 20 บาท)
+                discount20Amt = Math.min(20, subtotal - discountPromo);
+            }
+            
+            const totalDiscount = discountPromo + discount20Amt;
+            const grandTotal = Math.max(0, subtotal - totalDiscount);
+
+            // Render Promo Card
+            const promoContainer = document.getElementById('cart-promo-container');
+            if (promoContainer) {
+                let html = '<h4 class="font-heading text-xs font-bold text-gray-800 mb-3 uppercase tracking-widest"><i class="fa-solid fa-ticket text-orange-500 mr-1"></i> โปรโมชั่นที่ใช้ได้</h4>';
+                
+                // 1. คูปอง 50%
+                if (promoUsed) {
+                    html += `
+                        <div class="bg-gray-50 p-4 rounded-3xl border border-gray-100 shadow-sm flex items-center justify-between opacity-60 grayscale mb-3">
+                            <div class="flex items-center gap-3"><div class="w-10 h-10 bg-gray-200 text-gray-400 rounded-xl flex items-center justify-center"><i class="fa-solid fa-percent"></i></div><div><h4 class="font-bold text-sm text-gray-800 font-heading leading-tight">ส่วนลดเบเกอรี่ 50%</h4><p class="text-[9px] text-red-400 font-bold mt-0.5" style="font-family: 'Bai Jamjuree'">คูปองนี้ถูกใช้ไปแล้ว</p></div></div><button class="px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest bg-gray-200 text-gray-400 cursor-not-allowed" disabled>ใช้แล้ว</button>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="bg-white p-4 rounded-3xl border ${promoValid ? (isPromoApplied ? 'border-orange-500 bg-orange-50' : 'border-orange-100') : 'border-gray-100 bg-gray-50 opacity-60 grayscale'} shadow-sm flex items-center justify-between transition-all duration-300 mb-3">
+                            <div class="flex items-center gap-3"><div class="w-10 h-10 ${promoValid ? 'bg-orange-100 text-orange-500' : 'bg-gray-200 text-gray-400'} rounded-xl flex items-center justify-center"><i class="fa-solid fa-percent"></i></div><div><h4 class="font-bold text-sm text-gray-800 font-heading leading-tight">ส่วนลดเบเกอรี่ 50%</h4><p class="text-[9px] ${promoValid ? 'text-gray-500' : 'text-red-400 font-bold'} mt-0.5" style="font-family: 'Bai Jamjuree'">${promoValid ? 'เมื่อสั่ง Signature' : 'ต้องสั่งเมนู Signature คู่กับเบเกอรี่'}</p></div></div><button onclick="togglePromo()" class="px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all ${!promoValid ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : (isPromoApplied ? 'bg-red-100 text-red-500 active:scale-95' : 'bg-orange-500 text-white active:scale-95')}" ${!promoValid ? 'disabled' : ''}>${!promoValid ? 'ใช้ไม่ได้' : (isPromoApplied ? 'ยกเลิก' : 'ใช้สิทธิ์')}</button>
+                        </div>
+                    `;
+                }
+
+                // 2. แสดงคูปอง 20 บาทที่ปรับเป็นธีมสีน้ำตาลแล้ว
+                if (is20DiscountApplied) {
+                    html += `
+                        <div class="bg-[var(--cream)] p-4 rounded-3xl border border-forest shadow-sm flex items-center justify-between transition-all duration-300">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-forest/5 text-forest rounded-xl flex items-center justify-center"><i class="fa-solid fa-ticket"></i></div>
+                                <div><h4 class="font-bold text-sm text-gray-800 font-heading leading-tight">คูปองส่วนลด 20.-</h4><p class="text-[9px] text-gray-500 mt-0.5" style="font-family: 'Bai Jamjuree'">หักลบอัตโนมัติ</p></div>
+                            </div>
+                            <button onclick="is20DiscountApplied=false; renderCart();" class="px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest bg-red-100 text-red-500 active:scale-95 transition-all">ยกเลิก</button>
+                        </div>
+                    `;
+                }
+
+                promoContainer.innerHTML = html;
+            }
+
+            // Render Price Summary
+            const summaryContainer = document.getElementById('price-summary-container');
+            if (summaryContainer) {
+                summaryContainer.innerHTML = `
+                    <div class="space-y-2 mb-4 text-sm font-bold text-gray-500">
+                        <div class="flex justify-between"><span>Subtotal</span><span>฿${subtotal}</span></div>
+                        ${discountPromo > 0 ? `<div class="flex justify-between text-orange-500"><span>Discount (Bakery 50%)</span><span>-฿${discountPromo}</span></div>` : ''}
+                        ${discount20Amt > 0 ? `<div class="flex justify-between text-forest"><span>Discount (คูปอง 20.-)</span><span>-฿${discount20Amt}</span></div>` : ''}
+                    </div>
+                    <div class="flex justify-between items-center text-xl font-black border-t border-dashed pt-4 font-heading italic tracking-tighter text-gray-800">
+                        <span>Total</span><span class="text-forest" id="final-total">฿${grandTotal}</span>
+                    </div>
+                `;
+            }
+
+            // Update Payment Page Total
+            const paymentTotalEl = document.getElementById('payment-total-amount');
+            if (paymentTotalEl) paymentTotalEl.innerText = '฿' + grandTotal;
+        }
+
+        function removeFromCart(i) { cart.splice(i, 1); renderCart(); updateCartBadge(); }
+        function clearCart() { cart = []; isPromoApplied = false; is20DiscountApplied = false; renderCart(); updateCartBadge(); showToast('ล้างตะกร้าเรียบร้อย'); }
+        function showToast(msg) { const t = document.getElementById('toast'); const m = document.getElementById('toast-message'); if (t && m) { m.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } }
+        
+        function completePayment() {
+            const pTimeEl = document.getElementById('pickup-time');
+            const finalTimeStr = (pTimeEl && pTimeEl.value) ? pTimeEl.value + ' น.' : 'รับทันที';
+            
+            const readyText = document.getElementById('ready-time-text');
+            if(readyText) {
+                readyText.innerText = "เวลานัดรับ: " + finalTimeStr;
+            }
+            
+            // คำนวณแต้มและแสตมป์ แล้วเก็บไว้ใน pendingStats (ยังไม่บวกเข้าบัญชีทันที)
+            let drinkCount = cart.filter(i => !i.isFood).length;
+            
+            // คำนวณ Grand Total จริงอีกครั้งเพื่อหาแต้ม
+            let subtotal = cart.reduce((s, i) => s + i.finalPrice, 0);
+            let discountPromo = 0;
+            if (isPromoApplied && cart.some(i => i.sig) && cart.some(i => i.cat === 'bakery')) {
+                const bakeryTotal = cart.filter(i => i.cat === 'bakery').reduce((s, i) => s + i.finalPrice, 0);
+                discountPromo = Math.floor(bakeryTotal * 0.5);
+                promoUsed = true; // มาร์คว่าคูปองถูกใช้แล้ว
+                const promoNotif = document.getElementById('notif-promo');
+                if(promoNotif) promoNotif.classList.add('hidden');
+            }
+            let discount20Amt = is20DiscountApplied ? Math.min(20, subtotal - discountPromo) : 0;
+            
+            // มาร์คคูปอง 20 ว่าถูกใช้แล้วหากมีในบิลนี้
+            if (is20DiscountApplied) {
+                discount20Used = true;
+                is20DiscountApplied = false;
+                switchRewardTab('unlocked'); // ให้ UI หน้ารางวัลอัปเดตเป็นสีเทา
+            }
+
+            let grandTotal = Math.max(0, subtotal - (discountPromo + discount20Amt));
+
+            pendingStats = { stamps: drinkCount, points: Math.floor(grandTotal / 10) }; // แต้มคิดจากยอดสุทธิ
+            
+            isOrderActive = true;
+            setOrderStatus('preparing'); // เซ็ตกลับเป็นเตรียมออเดอร์
+            
+            // ซ่อนแจ้งเตือนเก่าก่อน
+            document.getElementById('notif-badge').classList.add('hidden');
+            document.getElementById('notif-ready').classList.add('hidden');
+            
+            // จำลองเวลาออเดอร์เสร็จใน 5 วินาที
+            if(orderTimer) clearTimeout(orderTimer);
+            orderTimer = setTimeout(() => {
+                if(isOrderActive) {
+                    showToast('🔔 ออเดอร์ Q-01 พร้อมรับแล้ว!');
+                    document.getElementById('notif-badge').classList.remove('hidden');
+                    document.getElementById('notif-ready').classList.remove('hidden');
+                    setOrderStatus('ready'); // อัปเดตหน้าสถานะอัตโนมัติให้เป็นพร้อมรับ
+                }
+            }, 5000);
+
+            isPromoApplied = false; // รีเซ็ตโปรโมชั่นเมื่อจ่ายเงินเสร็จ
+            updateTrackerBar(); showPage('page-status'); cart = []; updateCartBadge();
+        }
+
+        function confirmOrderReceived() {
+            isOrderActive = false;
+            updateTrackerBar();
+            
+            // บวกแต้มและแสตมป์เข้าบัตรสะสมจริงๆ หลังจากลูกค้ายืนยันรับของ
+            userStats.stamps += pendingStats.stamps;
+            userStats.points += pendingStats.points;
+            
+            // บันทึกประวัติการทำรายการ
+            if (pendingStats.points > 0 || pendingStats.stamps > 0) {
+                const now = new Date();
+                orderHistory.unshift({
+                    date: now.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+                    stamps: pendingStats.stamps,
+                    points: pendingStats.points
+                });
+            }
+
+            // สร้างข้อความแจ้งเตือนความสำเร็จ
+            let toastMsg = 'ขอบคุณที่ใช้บริการ QUICK CUP ☕';
+            if(pendingStats.points > 0 || pendingStats.stamps > 0) {
+                toastMsg = `ได้รับ ${pendingStats.stamps} แสตมป์ และ ${pendingStats.points} แต้ม! 🎉`;
+            }
+            
+            // อัปเดต UI หน้าบัตรสะสมและรีเซ็ตค่าที่รออยู่
+            updateDisplayPoints(); 
+            renderStampGrid();
+            pendingStats = { stamps: 0, points: 0 };
+            
+            // เคลียร์การแจ้งเตือน
+            document.getElementById('notif-badge').classList.add('hidden');
+            document.getElementById('notif-ready').classList.add('hidden');
+            
+            showToast(toastMsg);
+            showPage('page-menu');
+        }
+
+        function viewReadyOrder() {
+            document.getElementById('notif-badge').classList.add('hidden'); // ซ่อนจุดแดงเมื่อเปิดดู
+            setOrderStatus('ready'); // ปรับสถานะเป็นพร้อมรับ
+            showPage('page-status');
+        }
+
+        function setOrderStatus(state) {
+            const mainIcon = document.getElementById('status-main-icon');
+            const mainText = document.getElementById('status-main-text');
+            const step2Text = document.getElementById('step-2-text');
+            const step3Dot = document.getElementById('step-3-dot');
+            const step3Text = document.getElementById('step-3-text');
+            const trackerText = document.getElementById('tracker-text');
+
+            if (!mainIcon) return;
+
+            if (state === 'ready') {
+                mainIcon.className = 'fa-solid fa-bag-shopping animate-bounce';
+                mainText.innerText = 'Ready to Pickup!';
+                
+                if (step2Text) step2Text.classList.replace('text-forest', 'text-gray-800');
+                
+                if (step3Dot) step3Dot.classList.add('active');
+                if (step3Text) {
+                    step3Text.classList.remove('opacity-30', 'text-gray-800');
+                    step3Text.classList.add('text-forest');
+                }
+                if (trackerText) trackerText.innerText = 'ออเดอร์ Q-01 พร้อมรับแล้ว!';
+                
+            } else {
+                // กำลังปรุง
+                mainIcon.className = 'fa-solid fa-mug-hot animate-bounce';
+                mainText.innerText = 'Preparing...';
+                
+                if (step2Text) {
+                    step2Text.classList.remove('text-gray-800');
+                    step2Text.classList.add('text-forest');
+                }
+                
+                if (step3Dot) step3Dot.classList.remove('active');
+                if (step3Text) {
+                    step3Text.classList.add('opacity-30', 'text-gray-800');
+                    step3Text.classList.remove('text-forest');
+                }
+                if (trackerText) trackerText.innerText = 'ออเดอร์ Q-01 กำลังปรุง...';
+            }
+        }
+
+        function updateTrackerBar() { const bar = document.getElementById('order-tracker-bar'); if(bar) bar.classList.toggle('hidden', !isOrderActive); }
+
+        function showPage(id) {
+            document.querySelectorAll('main, #page-customize-overlay, #page-payment, #page-status, #page-cart, #page-rewards, #page-profile, #page-notifications').forEach(p => p.classList.add('hidden'));
+            const target = document.getElementById(id);
+            if (target) {
+                target.classList.remove('hidden');
+                if (id === 'page-cart') {
+                    renderCart();
+                    generateTimeSlots(); // อัปเดตตัวเลือกเวลาให้เป็นเวลาปัจจุบันเสมอเมื่อเปิดตะกร้า
+                }
+                if (id === 'page-notifications') {
+                    document.getElementById('notif-badge').classList.add('hidden'); // ซ่อนจุดแดงเมื่อเปิดหน้าแจ้งเตือน
+                }
+                const fab = document.getElementById('reward-fab');
+                if(fab) fab.classList.toggle('hidden', id !== 'page-menu');
+                const tracker = document.getElementById('order-tracker-bar');
+                if(tracker) tracker.classList.toggle('hidden', !isOrderActive || id !== 'page-menu');
+                window.scrollTo({ top: 0, behavior: 'auto' });
+            }
+        }
+
+        function renderStampGrid() {
+            const grid = document.getElementById('stamp-grid');
+            if(!grid) return;
+            let html = '';
+            
+            // ไอคอนแก้วกาแฟ Custom SVG วาดเลียนแบบตัวอย่าง (ใช้เทคนิคสีพื้นหลังเจาะช่องว่าง)
+            const coffeeSvg = `
+                <svg viewBox="0 0 100 100" fill="currentColor" class="w-full h-full drop-shadow-sm" style="--cutout-color: #5d473d;">
+                    <!-- ไอควัน (Steam) -->
+                    <path d="M42 38 C 36 28 48 20 42 10" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M56 36 C 50 24 64 16 56 4" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+                    
+                    <!-- ตัวแก้ว (Cup Body) -->
+                    <path d="M22 45 C 22 75 74 75 74 45 Z" fill="currentColor"/>
+                    
+                    <!-- ขอบปากแก้ว (Cup Rim) เจาะทะลุสีให้ตรงกับการ์ดพื้นหลัง -->
+                    <ellipse cx="48" cy="45" rx="26" ry="6" fill="var(--cutout-color)"/>
+                    <ellipse cx="48" cy="46" rx="22" ry="4" fill="currentColor"/>
+                    
+                    <!-- เส้นเงาสะท้อนในแก้ว (Highlight cut-out) -->
+                    <path d="M35 55 C 45 75 65 65 65 55" fill="none" stroke="var(--cutout-color)" stroke-width="4" stroke-linecap="round"/>
+                    
+                    <!-- หูจับ (Handle) -->
+                    <path d="M70 52 C 90 52 90 70 68 72" fill="none" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/>
+                    
+                    <!-- จานรอง (Saucer) -->
+                    <path d="M12 84 C 12 96 84 96 84 84 Z" fill="currentColor"/>
+                    <!-- เส้นคั่นจานรอง -->
+                    <path d="M22 86 C 40 92 56 92 74 86" fill="none" stroke="var(--cutout-color)" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+            `;
+
+            for(let i=1; i<=10; i++) { 
+                const filled = i <= userStats.stamps; 
+                // จัดขนาดความกว้างความสูงของแก้วให้พอดีกับกรอบและปรับลูกเล่นเมื่อได้แสตมป์
+                html += `
+                    <div class="w-12 h-12 flex items-center justify-center transition-all duration-300" 
+                         style="${!filled ? 'opacity: 0.25;' : 'opacity: 1; transform: scale(1.1);'}">
+                        ${coffeeSvg}
+                    </div>
+                `; 
+            }
+            grid.innerHTML = html;
+            
+            const remaining = 10 - (userStats.stamps % 10);
+            const statusText = document.getElementById('stamp-status-text');
+            if(statusText) {
+                if (userStats.stamps > 0 && userStats.stamps % 10 === 0) {
+                    statusText.innerText = "สะสมครบแล้ว! กดรับรางวัลเลย";
+                } else {
+                    statusText.innerText = `อีก ${remaining} แก้วจะได้รับของรางวัล`;
+                }
+            }
+        }
+
+        function switchRewardTab(type, el = null) {
+            const container = document.getElementById('reward-list-container');
+            if(!container) return;
+            const tabs = document.querySelectorAll('.reward-tab-btn');
+            tabs.forEach(t => t.classList.remove('active', 'text-forest', 'border-forest', 'border-transparent'));
+            tabs.forEach(t => t.classList.add('text-gray-400', 'border-transparent'));
+            
+            if(el) {
+                el.classList.remove('text-gray-400', 'border-transparent');
+                el.classList.add('active', 'text-forest', 'border-forest');
+            }
+            
+            if(type === 'locked') {
+                container.innerHTML = `<div class="flex items-center gap-4 bg-white p-4 rounded-[2rem] border border-gray-100 shadow-sm opacity-60 cursor-pointer hover:bg-gray-50 transition-all" onclick="showRewardPreview('กาแฟฟรี 1 แก้ว', 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?w=600', 'สะสมแสตมป์ครบ 10 ดวงเพื่อแลกรับเครื่องดื่มหมวดมาตรฐานฟรี 1 แก้ว')"><div class="w-16 h-16 bg-gray-100 rounded-2xl overflow-hidden grayscale"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200" class="w-full h-full object-cover"></div><div class="flex-grow"><h4 class="font-bold text-sm text-gray-800 font-heading">กาแฟฟรี 1 แก้ว</h4><p class="text-[10px] text-gray-400 mt-0.5" style="font-family: 'Bai Jamjuree';">สะสมให้ครบ 10 แก้วเพื่อรับสิทธิ์</p></div><i class="fa-solid fa-lock text-gray-300 mr-2"></i></div>`;
+            } else {
+                if (discount20Used) {
+                    container.innerHTML = `<div class="flex items-center gap-4 bg-gray-50 p-4 rounded-[2rem] border border-gray-100 shadow-sm opacity-50"><div class="w-16 h-16 bg-gray-200 rounded-2xl overflow-hidden flex items-center justify-center text-gray-400 text-2xl"><i class="fa-solid fa-ticket"></i></div><div class="flex-grow"><h4 class="font-bold text-sm text-gray-800 font-heading line-through">คูปองส่วนลด 20.-</h4><p class="text-[10px] text-gray-400 font-bold mt-0.5 tracking-wide">ใช้สิทธิ์ไปแล้ว</p></div></div>`;
+                } else {
+                    container.innerHTML = `<div class="flex items-center gap-4 bg-white p-4 rounded-[2rem] border border-green-50 shadow-sm cursor-pointer" onclick="showRewardPreview('คูปองส่วนลด 20.-', 'https://images.unsplash.com/photo-1556742049-13940234394c?w=600', 'ส่วนลดเงินสด 20 บาท สำหรับออเดอร์ถัดไป')"><div class="w-16 h-16 bg-forest/5 rounded-2xl overflow-hidden flex items-center justify-center text-forest text-2xl"><i class="fa-solid fa-ticket"></i></div><div class="flex-grow"><h4 class="font-bold text-sm text-gray-800 font-heading">คูปองส่วนลด 20.-</h4><p class="text-[10px] text-forest font-bold mt-0.5 tracking-wide">พร้อมใช้งาน (Ready to use)</p></div><button onclick="event.stopPropagation(); use20Discount();" class="bg-forest text-white px-4 py-2 rounded-xl text-[10px] font-bold active:scale-95 transition-all">ใช้สิทธิ์</button></div>`;
+                }
+            }
+        }
+
+        function showRewardPreview(name, img, desc) {
+            const t = document.getElementById('reward-prev-title');
+            const i = document.getElementById('reward-prev-img');
+            const d = document.getElementById('reward-prev-desc');
+            if(t) t.innerText = name;
+            if(i) i.src = img;
+            if(d) d.innerText = desc;
+            toggleModal('modal-reward-preview');
+        }
+
+        function showInfoModal(type) {
+            const t = document.getElementById('info-title');
+            const icon = document.getElementById('info-icon');
+            const content = document.getElementById('info-content');
+            if(!t || !icon || !content) return;
+            if(type === 'history') { 
+                t.innerText = "History"; 
+                icon.innerHTML = '<i class="fa-solid fa-receipt"></i>'; 
+                if (orderHistory.length === 0) {
+                    content.innerHTML = '<p class="italic text-center text-gray-400 font-medium">ไม่มีประวัติการทำรายการในระบบ</p>'; 
+                } else {
+                    content.innerHTML = '<div class="space-y-3 text-left max-h-60 overflow-y-auto no-scrollbar pr-1">' + orderHistory.map(h => `<div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex justify-between items-center"><div><p class="text-sm font-bold text-gray-800 font-heading">รับจากออเดอร์</p><p class="text-[10px] text-gray-400 mt-1" style="font-family: 'Bai Jamjuree';">${h.date}</p></div><div class="text-right"><p class="text-forest font-bold font-heading">+${h.points} pts</p><p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">+${h.stamps} stamps</p></div></div>`).join('') + '</div>';
+                }
+            }
+            else if(type === 'premium') { t.innerText = "Premium"; icon.innerHTML = '<i class="fa-solid fa-gem"></i>'; content.innerHTML = '<div class="space-y-4 text-left font-medium"><div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex justify-between"><span>แก้ว Tumীবbler (Limited)</span><span class="text-forest font-bold font-heading">500 pts</span></div><div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex justify-between"><span>ถุงผ้า Quick Cup</span><span class="text-forest font-bold font-heading">300 pts</span></div></div>'; }
+            else if(type === 'chat') { t.innerText = "Support"; icon.innerHTML = '<i class="fa-solid fa-comments"></i>'; content.innerHTML = '<p class="text-center italic text-gray-400 font-medium">กำลังเชื่อมต่อพนักงาน Support...<br>กรุณารอสักครู่ (Support Live)</p>'; }
+            toggleModal('modal-info');
+        }
+
+        function saveProfile() {
+            const nameVal = document.getElementById('input-name').value;
+            const bioVal = document.getElementById('input-bio').value;
+            userProfile.name = nameVal;
+            userProfile.bio = bioVal;
+            updateDisplayPoints();
+            showToast("บันทึกข้อมูลเรียบร้อยแล้ว");
+        }
+    </script>
+</body>
+</html>
